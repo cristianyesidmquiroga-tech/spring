@@ -16,3 +16,7 @@ INSERT INTO finca_cultivo (finca_id, cultivo_id, area_sembrada_ha, fecha_siembra
     (2, 2, 5.5, '2025-08-20', 'VERANO',    'ACTIVO'),
     (3, 1, 3.0, '2025-10-01', 'OTONO',     'ACTIVO'),
     (3, 5, 9.0, '2024-04-10', 'PRIMAVERA', 'ACTIVO');
+
+-- Usuario de práctica para probar el login en local (contraseña: Adso2026*)
+INSERT INTO usuarios (nombre, email, password_hash, rol) VALUES
+    ('Instructor ADSO', 'instructor@adso.co', '$2a$10$Ykw73efybYvQuEvKIdjrtejABwoWVizUx0vtvZRDYZnJw4j.qcXP.', 'ADMIN');

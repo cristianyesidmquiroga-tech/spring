@@ -4,9 +4,7 @@ import co.sena.adso.fincasapi.dto.CultivoRequestDTO;
 import co.sena.adso.fincasapi.dto.CultivoResponseDTO;
 import co.sena.adso.fincasapi.entity.Cultivo;
 import co.sena.adso.fincasapi.exception.ResourceNotFoundException;
-import co.sena.adso.fincasapi.exception.BusinessException;
 import co.sena.adso.fincasapi.repository.CultivoRepository;
-import co.sena.adso.fincasapi.repository.FincaCultivoRepository;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -16,16 +14,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class CultivoService {
 
     private final CultivoRepository cultivoRepository;
-    private final FincaCultivoRepository siembraRepository;
 
-    public CultivoService(CultivoRepository cultivoRepository, FincaCultivoRepository siembraRepository) {
+    public CultivoService(CultivoRepository cultivoRepository) {
         this.cultivoRepository = cultivoRepository;
-        this.siembraRepository = siembraRepository;
     }
 
     @Transactional(readOnly = true)
     public List<CultivoResponseDTO> listar() {
-        return cultivoRepository.findAll(Sort.by("nombre")).stream()
+        return cultivoRepository.findAll(Sort.by("id")).stream()
                 .map(CultivoResponseDTO::fromEntity)
                 .toList();
     }
@@ -37,33 +33,20 @@ public class CultivoService {
 
     @Transactional
     public CultivoResponseDTO crear(CultivoRequestDTO datos) {
-        String nombre = datos.nombre().trim();
-        if (cultivoRepository.existsByNombreIgnoreCase(nombre)) {
-            throw new BusinessException("Ya existe un cultivo llamado " + nombre);
-        }
-        Cultivo cultivo = new Cultivo(nombre, datos.tipo(), datos.cicloDias());
+        Cultivo cultivo = new Cultivo(datos.nombre().trim(), datos.tipo().trim(), datos.cicloDias());
         return CultivoResponseDTO.fromEntity(cultivoRepository.save(cultivo));
     }
 
     @Transactional
     public CultivoResponseDTO actualizar(Long id, CultivoRequestDTO datos) {
         Cultivo cultivo = buscarCultivo(id);
-        String nombre = datos.nombre().trim();
-        if (cultivoRepository.existsByNombreIgnoreCaseAndIdNot(nombre, id)) {
-            throw new BusinessException("Ya existe otro cultivo llamado " + nombre);
-        }
-        cultivo.actualizar(nombre, datos.tipo(), datos.cicloDias());
+        cultivo.actualizar(datos.nombre().trim(), datos.tipo().trim(), datos.cicloDias());
         return CultivoResponseDTO.fromEntity(cultivo);
     }
 
     @Transactional
     public void eliminar(Long id) {
-        Cultivo cultivo = buscarCultivo(id);
-        if (siembraRepository.existsByCultivoId(id)) {
-            throw new BusinessException("El cultivo " + cultivo.getNombre()
-                    + " tiene siembras registradas; elimínalas primero");
-        }
-        cultivoRepository.delete(cultivo);
+        cultivoRepository.delete(buscarCultivo(id));
     }
 
     Cultivo buscarCultivo(Long id) {

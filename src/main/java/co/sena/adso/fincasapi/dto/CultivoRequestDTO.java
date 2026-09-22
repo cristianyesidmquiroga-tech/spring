@@ -2,7 +2,6 @@ package co.sena.adso.fincasapi.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
@@ -11,8 +10,8 @@ public record CultivoRequestDTO(
         @Size(max = 80, message = "El nombre admite máximo 80 caracteres")
         String nombre,
 
-        @NotBlank(message = "El tipo es obligatorio")
-        @Pattern(regexp = "permanente|transitorio", message = "El tipo debe ser permanente o transitorio")
+        @NotBlank(message = "El tipo es obligatorio (permanente o transitorio)")
+        @Size(max = 30, message = "El tipo admite máximo 30 caracteres")
         String tipo,
 
         @NotNull(message = "El ciclo en días es obligatorio")

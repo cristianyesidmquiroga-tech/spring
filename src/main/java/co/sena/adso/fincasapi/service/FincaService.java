@@ -3,10 +3,7 @@ package co.sena.adso.fincasapi.service;
 import co.sena.adso.fincasapi.dto.FincaRequestDTO;
 import co.sena.adso.fincasapi.dto.FincaResponseDTO;
 import co.sena.adso.fincasapi.entity.Finca;
-import co.sena.adso.fincasapi.enums.EstadoSiembra;
 import co.sena.adso.fincasapi.exception.ResourceNotFoundException;
-import co.sena.adso.fincasapi.exception.BusinessException;
-import co.sena.adso.fincasapi.repository.FincaCultivoRepository;
 import co.sena.adso.fincasapi.repository.FincaRepository;
 import co.sena.adso.fincasapi.specification.FincaSpecification;
 import java.util.List;
@@ -20,11 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class FincaService {
 
     private final FincaRepository fincaRepository;
-    private final FincaCultivoRepository siembraRepository;
 
-    public FincaService(FincaRepository fincaRepository, FincaCultivoRepository siembraRepository) {
+    public FincaService(FincaRepository fincaRepository) {
         this.fincaRepository = fincaRepository;
-        this.siembraRepository = siembraRepository;
     }
 
     @Transactional(readOnly = true)
@@ -62,11 +57,6 @@ public class FincaService {
     @Transactional
     public FincaResponseDTO actualizar(Long id, FincaRequestDTO datos) {
         Finca finca = buscarFinca(id);
-        double areaActiva = siembraRepository.sumarArea(id, EstadoSiembra.ACTIVO, -1L);
-        if (datos.hectareas() < areaActiva) {
-            throw new BusinessException("La finca tiene " + areaActiva
-                    + " ha sembradas en cultivos activos; no puede quedar con " + datos.hectareas() + " ha");
-        }
         finca.actualizar(datos.nombre().trim(), datos.propietario().trim(), datos.vereda().trim(),
                 datos.municipio().trim(), datos.hectareas());
         return FincaResponseDTO.fromEntity(finca);

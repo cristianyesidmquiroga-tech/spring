@@ -21,6 +21,4 @@ public interface FincaCultivoRepository extends JpaRepository<FincaCultivo, Long
     Double sumarArea(@Param("fincaId") Long fincaId,
                      @Param("estado") EstadoSiembra estado,
                      @Param("excluirId") Long excluirId);
-
-    boolean existsByCultivoId(Long cultivoId);
 }
