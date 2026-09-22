@@ -14,7 +14,7 @@ Proyecto de la fase 2 de ADSO (SENA), hecho siguiendo la gu√≠a de Spring Boot m√
 1. Crear la base de datos:
 
    ```
-   psql -h localhost -p 5434 -U postgres -c "CREATE DATABASE adso_fincas;"
+   psql -h localhost -p 5434 -U postgres -c "CREATE DATABASE spring_fincas;"
    ```
 
 2. Copiar `.env.example` como `.env` y llenar `DB_PASSWORD` y `JWT_SECRET`.
