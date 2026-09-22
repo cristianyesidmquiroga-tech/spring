@@ -1,0 +1,10 @@
+target/
+.env
+*.log
+logs/
+
+nbproject/private/
+nbactions-*.xml
+.idea/
+*.iml
+.vscode/
