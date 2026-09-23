@@ -2,6 +2,7 @@ target/
 .env
 *.log
 logs/
+datos/
 
 nbproject/private/
 nbactions-*.xml
