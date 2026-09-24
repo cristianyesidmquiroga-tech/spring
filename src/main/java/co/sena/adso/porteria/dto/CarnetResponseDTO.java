@@ -10,6 +10,12 @@ public record CarnetResponseDTO(
         String ficha,
         String programa,
         String fechaFinalizacion,
-        String codigoBarras
+        String codigoBarras,
+        String codigoBarrasSvg,
+        String regional,
+        String centro,
+        String aseguradora,
+        String aseguradoraTel,
+        String poliza
 ) {
 }

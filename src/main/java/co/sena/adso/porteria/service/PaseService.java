@@ -8,9 +8,11 @@ import co.sena.adso.porteria.dto.PasesResponseDTO.VisitanteDTO;
 import co.sena.adso.porteria.dto.VehiculoRequestDTO;
 import co.sena.adso.porteria.dto.VisitanteRequestDTO;
 import co.sena.adso.porteria.entity.ObjetoExterno;
+import co.sena.adso.porteria.entity.Usuario;
 import co.sena.adso.porteria.entity.Vehiculo;
 import co.sena.adso.porteria.entity.Visitante;
 import co.sena.adso.porteria.exception.BusinessException;
+import co.sena.adso.porteria.exception.DatoInvalidoException;
 import co.sena.adso.porteria.exception.ResourceNotFoundException;
 import co.sena.adso.porteria.repository.ObjetoExternoRepository;
 import co.sena.adso.porteria.repository.VehiculoRepository;
@@ -20,6 +22,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HexFormat;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +33,16 @@ public class PaseService {
     private final VisitanteRepository visitanteRepository;
     private final VehiculoRepository vehiculoRepository;
     private final ObjetoExternoRepository objetoRepository;
+    private final AuthService authService;
     private final Clock reloj;
     private final SecureRandom aleatorio = new SecureRandom();
 
     public PaseService(VisitanteRepository visitanteRepository, VehiculoRepository vehiculoRepository,
-                       ObjetoExternoRepository objetoRepository, Clock reloj) {
+                       ObjetoExternoRepository objetoRepository, AuthService authService, Clock reloj) {
         this.visitanteRepository = visitanteRepository;
         this.vehiculoRepository = vehiculoRepository;
         this.objetoRepository = objetoRepository;
+        this.authService = authService;
         this.reloj = reloj;
     }
 
@@ -52,7 +57,7 @@ public class PaseService {
     @Transactional
     public VisitanteDTO registrarVisitante(VisitanteRequestDTO datos) {
         String documento = datos.documento().replaceAll("[\\s.\\-]", "").toUpperCase();
-        String nombre = datos.nombre().trim();
+        String nombre = requerido(datos.nombre(), "El nombre es obligatorio");
         String motivo = opcional(datos.motivo());
         Visitante visitante = visitanteRepository.findByDocumento(documento)
                 .map(v -> {
@@ -81,37 +86,49 @@ public class PaseService {
     @Transactional
     public ObjetoDTO registrarObjeto(ObjetoRequestDTO datos) {
         String serial = opcional(datos.serial());
-        String descripcion = datos.descripcion().trim();
+        String descripcion = requerido(datos.descripcion(), "La descripción es obligatoria");
         String propietario = opcional(datos.propietario());
         String motivo = opcional(datos.motivo());
+        Usuario operador = authService.usuarioActual();
         if (serial != null) {
             var existente = objetoRepository.findBySerial(serial);
             if (existente.isPresent()) {
+                verificarDueno(existente.get(), operador);
                 existente.get().actualizar(descripcion, propietario, motivo);
                 return ObjetoDTO.fromEntity(existente.get());
             }
         } else {
             serial = serialGenerado();
         }
-        return ObjetoDTO.fromEntity(objetoRepository.save(new ObjetoExterno(descripcion, serial, propietario, motivo, ahora())));
+        return ObjetoDTO.fromEntity(objetoRepository.save(
+                new ObjetoExterno(descripcion, serial, propietario, motivo, ahora(), operador.getId())));
     }
 
     @Transactional
     public ObjetoDTO actualizarObjeto(Long id, ObjetoRequestDTO datos) {
         ObjetoExterno objeto = buscarObjeto(id);
+        verificarDueno(objeto, authService.usuarioActual());
         String serial = opcional(datos.serial());
         if (serial != null && !serial.equals(objeto.getSerial())) {
             throw new BusinessException("El serial no se puede cambiar porque va impreso en el código del pase");
         }
-        objeto.actualizar(datos.descripcion().trim(), opcional(datos.propietario()), opcional(datos.motivo()));
+        objeto.actualizar(requerido(datos.descripcion(), "La descripción es obligatoria"), opcional(datos.propietario()),
+                opcional(datos.motivo()));
         return ObjetoDTO.fromEntity(objeto);
     }
 
     @Transactional
     public ObjetoDTO desactivarObjeto(Long id) {
         ObjetoExterno objeto = buscarObjeto(id);
+        verificarDueno(objeto, authService.usuarioActual());
         objeto.desactivar();
         return ObjetoDTO.fromEntity(objeto);
+    }
+
+    private static void verificarDueno(ObjetoExterno objeto, Usuario operador) {
+        if (!objeto.puedeModificar(operador)) {
+            throw new AccessDeniedException("Ese pase lo registró otro operador");
+        }
     }
 
     private ObjetoExterno buscarObjeto(Long id) {
@@ -131,6 +148,14 @@ public class PaseService {
     }
 
     private static String opcional(String valor) {
-        return valor == null || valor.isBlank() ? null : valor.trim();
+        return Texto.opcional(valor);
+    }
+
+    private static String requerido(String valor, String mensaje) {
+        String limpio = Texto.opcional(valor);
+        if (limpio == null) {
+            throw new DatoInvalidoException(mensaje);
+        }
+        return limpio;
     }
 }

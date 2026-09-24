@@ -19,7 +19,11 @@ public record HistorialResponseDTO(
 
     public record Movimiento(LocalDate fecha, LocalDateTime entrada, LocalDateTime salida, Long permanenciaMinutos,
                              List<String> equipos, boolean abierto, boolean cierreAutomatico,
-                             boolean entradaFueraDeVentana) {
+                             boolean entradaFueraDeVentana, boolean entradaPreviaAlRango,
+                             boolean salidaPosteriorAlRango) {
+    }
+
+    public record DetalleDia(int faltas, int oportunidades) {
     }
 
     public record Resumen(
@@ -33,6 +37,7 @@ public record HistorialResponseDTO(
             LocalDate periodoEvaluadoFin,
             List<String> motivosVentana,
             Map<String, Integer> faltasPorDia,
+            Map<String, DetalleDia> detalleDiasSemana,
             String diaMasFaltado,
             List<String> diasEmpatados,
             String motivoSinDia,

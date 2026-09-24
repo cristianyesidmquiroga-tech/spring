@@ -27,17 +27,19 @@ public class PerfilService {
     private final DocumentoService documentoService;
     private final CarnetService carnetService;
     private final FotoService fotoService;
+    private final AvatarService avatarService;
     private final Clock reloj;
 
     public PerfilService(AuthService authService, UsuarioRepository usuarioRepository, FichaRepository fichaRepository,
                          DocumentoService documentoService, CarnetService carnetService, FotoService fotoService,
-                         Clock reloj) {
+                         AvatarService avatarService, Clock reloj) {
         this.authService = authService;
         this.usuarioRepository = usuarioRepository;
         this.fichaRepository = fichaRepository;
         this.documentoService = documentoService;
         this.carnetService = carnetService;
         this.fotoService = fotoService;
+        this.avatarService = avatarService;
         this.reloj = reloj;
     }
 
@@ -68,7 +70,7 @@ public class PerfilService {
         }
 
         if (datos.programa() != null && !datos.programa().isBlank() && !usuario.esAprendiz()) {
-            usuario.setPrograma(capitalizar(datos.programa().trim()));
+            usuario.setPrograma(capitalizar(Texto.limpiar(datos.programa())));
         }
 
         // El aprendiz elige su ficha y de ella hereda programa y fecha de finalización
@@ -103,9 +105,12 @@ public class PerfilService {
         return PerfilResponseDTO.fromEntity(usuario);
     }
 
-    /** Foto de una persona: la propia, o la de otros si el permiso lo justifica. */
+    public record Imagen(Resource archivo, boolean silueta) {
+    }
+
+    /** Foto de una persona (la propia, o la de otros si el permiso lo justifica); sin foto, la silueta de su cargo. */
     @Transactional(readOnly = true)
-    public Resource foto(Long usuarioId) {
+    public Imagen foto(Long usuarioId) {
         Usuario solicitante = authService.usuarioActual();
         boolean puedeVer = solicitante.getId().equals(usuarioId) || solicitante.esAdmin()
                 || solicitante.puedeOperarPorteria() || solicitante.puedeAsesorar()
@@ -115,11 +120,13 @@ public class PerfilService {
         }
         Usuario dueno = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException("un usuario", usuarioId));
-        return fotoService.obtener(dueno);
+        return fotoService.buscar(dueno).map(f -> new Imagen(f, false))
+                .orElseGet(() -> new Imagen(avatarService.avatar(dueno.getCargo()), true));
     }
 
     private static String textoOpcional(String valor) {
-        return valor == null || valor.isBlank() ? null : valor.trim().replaceAll("\\s+", " ");
+        String limpio = Texto.opcional(valor);
+        return limpio == null ? null : limpio.replaceAll("\\s+", " ");
     }
 
     private static String capitalizar(String texto) {

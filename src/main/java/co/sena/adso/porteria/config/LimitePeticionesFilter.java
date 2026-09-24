@@ -61,27 +61,44 @@ public class LimitePeticionesFilter extends OncePerRequestFilter {
         long ventanaMayor = regla.ventanas().stream().mapToLong(Ventana::duracionMs).max().orElse(MINUTO);
 
         Deque<Long> lista = registros.computeIfAbsent(clave, k -> new ArrayDeque<>());
-        boolean excedido;
+        long esperaMs = 0;
         synchronized (lista) {
             while (!lista.isEmpty() && ahora - lista.peekFirst() > ventanaMayor) {
                 lista.pollFirst();
             }
-            excedido = regla.ventanas().stream().anyMatch(v ->
-                    lista.stream().filter(t -> ahora - t <= v.duracionMs()).count() >= v.maximo());
-            if (!excedido) {
+            for (Ventana v : regla.ventanas()) {
+                List<Long> dentro = lista.stream().filter(t -> ahora - t <= v.duracionMs()).toList();
+                if (dentro.size() >= v.maximo()) {
+                    esperaMs = Math.max(esperaMs, v.duracionMs() - (ahora - dentro.get(0)));
+                }
+            }
+            if (esperaMs == 0) {
                 lista.addLast(ahora);
             }
         }
         limpiarSiCrece(ahora);
 
-        if (excedido) {
+        if (esperaMs > 0) {
+            long segundos = Math.max(1, (esperaMs + 999) / 1000);
             response.setStatus(429);
+            response.setHeader("Retry-After", String.valueOf(segundos));
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            response.getWriter().write("{\"status\":429,\"mensaje\":\"Demasiadas solicitudes, espera un momento\"}");
+            response.getWriter().write("{\"status\":429,\"mensaje\":\"Hiciste demasiadas peticiones seguidas. Espera "
+                    + cuanto(segundos) + " y vuelve a intentarlo.\"}");
             return;
         }
         chain.doFilter(request, response);
+    }
+
+    private static String cuanto(long segundos) {
+        if (segundos <= 90) {
+            return "un minuto";
+        }
+        if (segundos < 3600) {
+            return Math.round(segundos / 60.0) + " minutos";
+        }
+        return segundos < 5400 ? "una hora" : Math.round(segundos / 3600.0) + " horas";
     }
 
     private static String quien(HttpServletRequest request) {

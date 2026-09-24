@@ -1,8 +1,10 @@
 package co.sena.adso.porteria.service;
 
 import co.sena.adso.porteria.dto.AutorizacionRequestDTO;
-import co.sena.adso.porteria.dto.FotoPendienteResponseDTO;
+import co.sena.adso.porteria.dto.FotoRevisionResponseDTO;
+import co.sena.adso.porteria.dto.FotosRevisionResponseDTO;
 import co.sena.adso.porteria.dto.RevisionFotoRequestDTO;
+import co.sena.adso.porteria.dto.RevisionFotoResponseDTO;
 import co.sena.adso.porteria.dto.UsuarioAdminRequestDTO;
 import co.sena.adso.porteria.dto.UsuarioAdminResponseDTO;
 import co.sena.adso.porteria.entity.Rol;
@@ -18,7 +20,10 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsuarioAdminService {
 
     private static final String TABLA = "usuarios";
+    private static final int FOTOS_POR_PAGINA = 24;
+    private static final List<String> ESTADOS_REVISION =
+            List.of(Usuario.FOTO_PENDIENTE, Usuario.FOTO_APROBADA, Usuario.FOTO_RECHAZADA, "todos");
 
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
@@ -145,7 +153,7 @@ public class UsuarioAdminService {
         }
         Usuario usuario = buscar(id);
         if (usuario.esAdmin()) {
-            throw new BusinessException("Las cuentas con rol Admin no se eliminan, solo se editan");
+            throw new AccessDeniedException("Las cuentas con rol Admin no se eliminan, solo se editan");
         }
         String descripcion = usuario.getNombre() + " (" + usuario.getCorreo() + ")";
         String foto = usuario.getFoto();
@@ -166,28 +174,46 @@ public class UsuarioAdminService {
         return UsuarioAdminResponseDTO.fromEntity(usuario, LocalDateTime.now(reloj));
     }
 
+    // Paginado: aun con estado "todos" solo se expone el trozo que el admin está mirando (Ley 1581)
     @Transactional(readOnly = true)
-    public List<FotoPendienteResponseDTO> fotosPendientes() {
-        return usuarioRepository.findByFotoEstadoOrderByFotoFechaSubidaAsc(Usuario.FOTO_PENDIENTE).stream()
-                .map(FotoPendienteResponseDTO::fromEntity)
-                .toList();
+    public FotosRevisionResponseDTO fotos(String estado, int pagina) {
+        String filtro = ESTADOS_REVISION.contains(estado) ? estado : Usuario.FOTO_PENDIENTE;
+        Pageable orden = PageRequest.of(pagina, FOTOS_POR_PAGINA,
+                Sort.by(Sort.Order.asc("fotoFechaSubida").nullsFirst(), Sort.Order.asc("id")));
+        Page<Usuario> usuarios = "todos".equals(filtro)
+                ? usuarioRepository.findByFotoEstadoNot(Usuario.FOTO_SIN_FOTO, orden)
+                : usuarioRepository.findByFotoEstado(filtro, orden);
+        return FotosRevisionResponseDTO.de(usuarios.map(FotoRevisionResponseDTO::fromEntity), filtro,
+                usuarioRepository.countByFotoEstado(Usuario.FOTO_PENDIENTE));
     }
 
     @Transactional
-    public UsuarioAdminResponseDTO revisarFoto(Long id, RevisionFotoRequestDTO revision) {
+    public RevisionFotoResponseDTO revisarFoto(Long id, RevisionFotoRequestDTO revision) {
         Usuario usuario = buscar(id);
-        if (!Usuario.FOTO_PENDIENTE.equals(usuario.getFotoEstado())) {
-            throw new BusinessException("Esta foto no está pendiente de revisión");
+        if (usuario.getFoto() == null) {
+            throw new DatoInvalidoException("Ese usuario no tiene foto que revisar");
         }
-        if (!revision.aprobada() && (revision.motivo() == null || revision.motivo().isBlank())) {
+        String motivo = Texto.opcional(revision.motivo());
+        if (!revision.aprobada() && motivo == null) {
             throw new DatoInvalidoException("Escribe el motivo del rechazo para que la persona sepa qué corregir");
         }
+        // Idempotente: un doble clic no debe registrar dos veces la misma aprobación
+        if (revision.aprobada() && Usuario.FOTO_APROBADA.equals(usuario.getFotoEstado())) {
+            return new RevisionFotoResponseDTO("Esa foto ya estaba aprobada.",
+                    usuarioRepository.countByFotoEstado(Usuario.FOTO_PENDIENTE));
+        }
         Usuario admin = authService.usuarioActual();
-        usuario.revisarFoto(revision.aprobada(), revision.motivo(), admin.getId(), LocalDateTime.now(reloj));
+        if (!revision.aprobada()) {
+            // La foto rechazada no corresponde a la persona: no se conserva (minimización, Ley 1581)
+            fotoService.borrar(usuario.getFoto());
+        }
+        usuario.revisarFoto(revision.aprobada(), motivo, admin.getId(), LocalDateTime.now(reloj));
         usuario.setPerfilCompleto(usuario.calcularPerfilCompleto());
         auditoriaService.registrar(admin, TABLA, id, revision.aprobada() ? "Foto aprobada" : "Foto rechazada",
-                null, revision.motivo(), "Revisión de la foto de " + usuario.getNombre());
-        return UsuarioAdminResponseDTO.fromEntity(usuario, LocalDateTime.now(reloj));
+                null, motivo, "Revisión de la foto de " + usuario.getNombre());
+        usuarioRepository.flush();
+        return new RevisionFotoResponseDTO(revision.aprobada() ? "Foto aprobada" : "Foto rechazada",
+                usuarioRepository.countByFotoEstado(Usuario.FOTO_PENDIENTE));
     }
 
     private void aplicarDocumento(Usuario usuario, String tipo, String numero) {

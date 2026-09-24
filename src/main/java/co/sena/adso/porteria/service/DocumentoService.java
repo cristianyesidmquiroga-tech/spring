@@ -76,9 +76,12 @@ public class DocumentoService {
         return limpio;
     }
 
-    /** Sugerencia de tipo cuando no se indica; solo se usa si el número es todo dígitos. */
+    /** Sugerencia de tipo cuando no se indica: con letras solo puede ser pasaporte. */
     public String tipoProbable(String numero) {
         String limpio = normalizar(numero);
+        if (!limpio.chars().allMatch(Character::isDigit)) {
+            return limpio.isEmpty() ? TIPO_POR_DEFECTO : "PA";
+        }
         if (limpio.startsWith("0")) {
             return limpio.length() <= 7 ? "CE" : "PPT";
         }

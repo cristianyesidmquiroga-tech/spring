@@ -2,6 +2,7 @@ package co.sena.adso.porteria.service;
 
 import co.sena.adso.porteria.dto.HistorialResponseDTO;
 import co.sena.adso.porteria.dto.HistorialResponseDTO.Bloque;
+import co.sena.adso.porteria.dto.HistorialResponseDTO.DetalleDia;
 import co.sena.adso.porteria.dto.HistorialResponseDTO.Movimiento;
 import co.sena.adso.porteria.dto.HistorialResponseDTO.Resumen;
 import co.sena.adso.porteria.entity.Acceso;
@@ -180,7 +181,7 @@ public class HistorialService {
                     : diasEsperados(exigibleInicio, exigibleFin, soloHabiles);
 
             List<Movimiento> listados = movimientos.subList(Math.max(0, movimientos.size() - MAXIMO_MOVIMIENTOS_LISTADOS),
-                    movimientos.size()).stream().map(Mov::aDto).toList();
+                    movimientos.size()).stream().map(m -> m.aDto(inicio, fin)).toList();
             bloques.add(new Bloque(p.getId(), p.getNombre(), p.getDocumento(), p.getCargo(), p.numeroFicha(),
                     listados, resumir(movimientos, esperados, motivos)));
         }
@@ -260,8 +261,10 @@ public class HistorialService {
         esperados.forEach(d -> porDia.computeIfAbsent(DIAS[d.getDayOfWeek().getValue() - 1], k -> new int[2])[1]++);
         faltados.forEach(d -> porDia.get(DIAS[d.getDayOfWeek().getValue() - 1])[0]++);
         Map<String, Integer> faltasPorDia = new LinkedHashMap<>();
+        Map<String, DetalleDia> detalle = new LinkedHashMap<>();
         porDia.forEach((dia, v) -> {
             if (v[0] > 0) faltasPorDia.put(dia, v[0]);
+            detalle.put(dia, new DetalleDia(v[0], v[1]));
         });
 
         String diaPeor = null;
@@ -297,7 +300,7 @@ public class HistorialService {
                 : BigDecimal.valueOf(asistidos * 100.0 / esperados.size()).setScale(1, RoundingMode.HALF_UP).doubleValue();
         return new Resumen(esperados.size(), (int) asistidos, faltados.size(), faltados, (int) fueraDeComputo,
                 porcentaje, esperados.isEmpty() ? null : esperados.get(0),
-                esperados.isEmpty() ? null : esperados.get(esperados.size() - 1), motivos, faltasPorDia, diaPeor,
+                esperados.isEmpty() ? null : esperados.get(esperados.size() - 1), motivos, faltasPorDia, detalle, diaPeor,
                 empatados, motivoSinDia, movimientos.size(),
                 (int) movimientos.stream().filter(m -> m.salida == null && !m.abierto).count(),
                 (int) movimientos.stream().filter(m -> m.abierto).count(),
@@ -350,10 +353,13 @@ public class HistorialService {
             return entrada != null && salida != null ? Duration.between(entrada, salida).toMinutes() : null;
         }
 
-        Movimiento aDto() {
+        // Los avisos explican un turno que cruza el borde del rango consultado, sin partirlo
+        Movimiento aDto(LocalDate inicio, LocalDate fin) {
             LocalDate fecha = entrada != null ? entrada.toLocalDate() : salida.toLocalDate();
             return new Movimiento(fecha, entrada, salida, permanencia(), List.copyOf(equipos), abierto,
-                    cierreAutomatico, entradaFueraDeVentana);
+                    cierreAutomatico, entradaFueraDeVentana,
+                    entrada != null && entrada.toLocalDate().isBefore(inicio),
+                    salida != null && salida.toLocalDate().isAfter(fin));
         }
     }
 }

@@ -33,14 +33,24 @@ public class ObjetoExterno {
     @Column(name = "fecha_creacion", nullable = false)
     private LocalDateTime fechaCreacion;
 
+    @Column(name = "creado_por")
+    private Long creadoPor;
+
     protected ObjetoExterno() {
     }
 
-    public ObjetoExterno(String descripcion, String serial, String propietario, String motivo, LocalDateTime fecha) {
+    public ObjetoExterno(String descripcion, String serial, String propietario, String motivo, LocalDateTime fecha,
+                         Long creadoPor) {
         this.serial = serial;
         this.codigo = PREFIJO + serial;
         this.fechaCreacion = fecha;
+        this.creadoPor = creadoPor;
         actualizar(descripcion, propietario, motivo);
+    }
+
+    // Los pases anteriores a esta columna no tienen creador y los puede tocar cualquier operador
+    public boolean puedeModificar(Usuario usuario) {
+        return creadoPor == null || usuario.esAdmin() || creadoPor.equals(usuario.getId());
     }
 
     public void actualizar(String descripcion, String propietario, String motivo) {

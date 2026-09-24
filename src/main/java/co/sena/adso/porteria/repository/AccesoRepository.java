@@ -80,6 +80,14 @@ public interface AccesoRepository extends JpaRepository<Acceso, Long> {
                                      @Param("cargo") String cargo, @Param("ficha") String ficha);
 
     @Query("""
+            SELECT a, u FROM Acceso a, Usuario u
+            WHERE a.tipoReferencia = 'Usuario' AND u.id = a.referenciaId
+              AND a.fecha >= :desde AND a.fecha < :hasta AND u.cargo IN :cargos
+            """)
+    List<Object[]> accesosDeCargos(@Param("desde") LocalDateTime desde, @Param("hasta") LocalDateTime hasta,
+                                   @Param("cargos") Collection<String> cargos);
+
+    @Query("""
             SELECT a FROM Acceso a
             WHERE a.tipoReferencia = 'Usuario' AND a.referenciaId IN :ids
               AND a.fecha >= :desde AND a.fecha <= :hasta

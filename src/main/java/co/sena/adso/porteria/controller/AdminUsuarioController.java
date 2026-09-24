@@ -1,15 +1,17 @@
 package co.sena.adso.porteria.controller;
 
 import co.sena.adso.porteria.dto.AutorizacionRequestDTO;
-import co.sena.adso.porteria.dto.FotoPendienteResponseDTO;
+import co.sena.adso.porteria.dto.FotosRevisionResponseDTO;
 import co.sena.adso.porteria.dto.RevisionFotoRequestDTO;
+import co.sena.adso.porteria.dto.RevisionFotoResponseDTO;
 import co.sena.adso.porteria.dto.UsuarioAdminRequestDTO;
 import co.sena.adso.porteria.dto.UsuarioAdminResponseDTO;
 import co.sena.adso.porteria.service.UsuarioAdminService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import java.net.URI;
-import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -77,13 +79,14 @@ public class AdminUsuarioController {
         return usuarioAdminService.desbloquear(id);
     }
 
-    @GetMapping("/fotos/pendientes")
-    public List<FotoPendienteResponseDTO> fotosPendientes() {
-        return usuarioAdminService.fotosPendientes();
+    @GetMapping("/fotos")
+    public FotosRevisionResponseDTO fotos(@RequestParam(defaultValue = "pendiente") @Size(max = 20) String estado,
+                                          @RequestParam(defaultValue = "0") @Min(0) @Max(10_000) int pagina) {
+        return usuarioAdminService.fotos(estado, pagina);
     }
 
     @PostMapping("/fotos/{usuarioId}/revision")
-    public UsuarioAdminResponseDTO revisarFoto(@PathVariable Long usuarioId,
+    public RevisionFotoResponseDTO revisarFoto(@PathVariable Long usuarioId,
                                                @Valid @RequestBody RevisionFotoRequestDTO revision) {
         return usuarioAdminService.revisarFoto(usuarioId, revision);
     }

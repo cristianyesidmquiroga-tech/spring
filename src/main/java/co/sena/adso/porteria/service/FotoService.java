@@ -2,7 +2,6 @@ package co.sena.adso.porteria.service;
 
 import co.sena.adso.porteria.entity.Usuario;
 import co.sena.adso.porteria.exception.DatoInvalidoException;
-import co.sena.adso.porteria.exception.ResourceNotFoundException;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -14,6 +13,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.SecureRandom;
 import java.util.HexFormat;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -35,8 +35,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class FotoService {
 
     private static final Logger log = LoggerFactory.getLogger(FotoService.class);
-    private static final Set<String> FORMATOS_PERMITIDOS = Set.of("jpeg", "jpg", "png", "bmp");
-    private static final int LADO_MAXIMO = 800;
+    private static final Set<String> FORMATOS_PERMITIDOS = Set.of("jpeg", "jpg", "png", "webp");
+    private static final int LADO_MAXIMO = 512;
     private static final int LADO_MAXIMO_ENTRADA = 6000;
 
     private final Path carpeta;
@@ -70,12 +70,10 @@ public class FotoService {
         return nombre;
     }
 
-    public Resource obtener(Usuario usuario) {
+    // La columna puede apuntar a un archivo ya borrado del disco: en ese caso no hay foto
+    public Optional<Resource> buscar(Usuario usuario) {
         Path ruta = resolver(usuario.getFoto());
-        if (ruta == null || !Files.isRegularFile(ruta)) {
-            throw new ResourceNotFoundException("una foto para el usuario", usuario.getId());
-        }
-        return new PathResource(ruta);
+        return ruta == null || !Files.isRegularFile(ruta) ? Optional.empty() : Optional.of(new PathResource(ruta));
     }
 
     public void borrar(String nombre) {
@@ -111,7 +109,7 @@ public class FotoService {
             // Se valida el formato real del archivo, no la cabecera que manda el cliente
             if (!FORMATOS_PERMITIDOS.contains(lector.getFormatName().toLowerCase())) {
                 lector.dispose();
-                throw new DatoInvalidoException("Solo se permiten imágenes JPG, PNG o BMP");
+                throw new DatoInvalidoException("Solo se permiten imágenes JPG, PNG o WEBP");
             }
             try {
                 lector.setInput(flujo, true, true);

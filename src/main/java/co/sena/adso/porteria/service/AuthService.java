@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.HexFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -95,6 +96,9 @@ public class AuthService {
     @Transactional
     public SesionResponseDTO cambiarContrasena(CambioContrasenaRequestDTO datos) {
         Usuario usuario = usuarioActual();
+        if (!usuario.isDebeCambiarContrasena()) {
+            throw new AccessDeniedException("Solo se cambia aquí una contraseña temporal");
+        }
         // Se pide la actual: quien conociera la temporal no puede apropiarse de la cuenta
         if (!passwordEncoder.matches(datos.actual(), usuario.getContrasena())) {
             throw new DatoInvalidoException("La contraseña actual no es correcta");

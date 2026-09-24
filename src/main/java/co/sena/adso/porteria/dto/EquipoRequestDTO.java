@@ -11,7 +11,7 @@ public record EquipoRequestDTO(
         @Size(max = 60, message = "El serial admite máximo 60 caracteres")
         String serial,
 
-        @NotBlank(message = "El tipo de equipo es obligatorio")
+        // Opcional: si no llega se registra como "Otro"
         @Size(max = 20, message = "Tipo de equipo inválido")
         String tipo
 ) {

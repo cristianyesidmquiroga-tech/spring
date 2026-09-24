@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // Si el token de sesión guardado cambió (login en otro equipo, logout, cambio de clave) el JWT deja de servir
     private static boolean mismaSesion(String guardada, String recibida) {
-        if (guardada == null || recibida == null) {
+        if (guardada == null || recibida == null || guardada.isBlank() || recibida.isBlank()) {
             return false;
         }
         return MessageDigest.isEqual(guardada.getBytes(StandardCharsets.UTF_8), recibida.getBytes(StandardCharsets.UTF_8));

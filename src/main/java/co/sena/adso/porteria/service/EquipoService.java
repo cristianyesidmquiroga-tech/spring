@@ -36,17 +36,23 @@ public class EquipoService {
         if (!usuario.puedeRegistrarEquipos()) {
             throw new AccessDeniedException("Tu perfil no puede registrar equipos");
         }
-        if (!Equipo.TIPOS.contains(datos.tipo())) {
+        String tipo = Texto.opcional(datos.tipo()) == null ? "Otro" : Texto.limpiar(datos.tipo());
+        if (!Equipo.TIPOS.contains(tipo)) {
             throw new DatoInvalidoException("Tipo de equipo no válido");
+        }
+        String nombre = Texto.opcional(datos.nombre());
+        if (nombre == null) {
+            throw new DatoInvalidoException("El nombre del equipo es obligatorio");
         }
         if (equipoRepository.countByUsuarioId(usuario.getId()) >= Equipo.MAXIMO_POR_USUARIO) {
             throw new BusinessException("Solo puedes registrar hasta " + Equipo.MAXIMO_POR_USUARIO + " equipos");
         }
-        String serial = datos.serial() == null || datos.serial().isBlank() ? null : datos.serial().trim().toUpperCase();
+        String serial = Texto.opcional(datos.serial());
+        serial = serial == null ? null : serial.toUpperCase();
         if (serial != null && equipoRepository.existsBySerial(serial)) {
             throw new BusinessException("Ya existe un equipo registrado con ese serial");
         }
-        Equipo equipo = equipoRepository.save(new Equipo(datos.nombre().trim(), serial, datos.tipo(), usuario.getId()));
+        Equipo equipo = equipoRepository.save(new Equipo(nombre, serial, tipo, usuario.getId()));
         return EquipoResponseDTO.fromEntity(equipo);
     }
 

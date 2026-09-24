@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -52,9 +53,12 @@ public class SecurityConfig {
         if (seguridadActiva) {
             http.authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/auth/login", "/api/hello", "/actuator/health").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/avatares/*").permitAll()
                     .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .requestMatchers("/error").permitAll()
                     .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
+                    // Por ruta y no solo con @PreAuthorize: así un perfil sin permiso no ve errores de validación
+                    .requestMatchers("/api/porteria/**").hasAuthority("OPERAR_PORTERIA")
                     .anyRequest().authenticated());
         } else {
             http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());

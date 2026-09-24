@@ -1,6 +1,7 @@
 package co.sena.adso.porteria.repository;
 
 import co.sena.adso.porteria.entity.Usuario;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -33,7 +34,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Page<Usuario> buscar(@Param("texto") String texto, @Param("rolId") Long rolId,
                          @Param("cargo") String cargo, Pageable pageable);
 
-    List<Usuario> findByFotoEstadoOrderByFotoFechaSubidaAsc(String fotoEstado);
+    Page<Usuario> findByFotoEstado(String fotoEstado, Pageable pageable);
+
+    Page<Usuario> findByFotoEstadoNot(String fotoEstado, Pageable pageable);
+
+    long countByFotoEstado(String fotoEstado);
 
     Optional<Usuario> findByDocumento(String documento);
 
@@ -41,7 +46,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     long countByRolNombre(String rolNombre);
 
-    List<Usuario> findByCargoOrderByNombre(String cargo);
+    List<Usuario> findByCargoInOrderByNombre(Collection<String> cargos);
 
     @Query("SELECT DISTINCT u.ficha FROM Usuario u WHERE u.ficha IS NOT NULL AND u.ficha <> '' ORDER BY u.ficha")
     List<String> fichasEnUso();

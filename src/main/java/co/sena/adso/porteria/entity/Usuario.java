@@ -216,6 +216,9 @@ public class Usuario {
     public void revisarFoto(boolean aprobada, String motivo, Long revisor, LocalDateTime fecha) {
         this.fotoEstado = aprobada ? FOTO_APROBADA : FOTO_RECHAZADA;
         this.fotoMotivo = aprobada ? null : motivo;
+        if (!aprobada) {
+            this.foto = null;
+        }
         this.fotoRevisadaPor = revisor;
         this.fotoFechaRevision = fecha;
     }

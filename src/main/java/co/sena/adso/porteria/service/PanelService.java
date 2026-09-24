@@ -46,6 +46,9 @@ public class PanelService {
 
     private static final Locale ES = Locale.forLanguageTag("es-CO");
     private static final int MAXIMO_DIAS_EXPORTACION = 366;
+    // "Personal" agrupa a quien no es aprendiz ni instructor, repartido por cargo
+    private static final String PERSONAL = "Personal";
+    private static final List<String> CARGOS_FORMACION = List.of("Aprendiz", "Instructor");
     private static final Set<Character> INICIO_FORMULA = Set.of('=', '+', '-', '@', '\t', '\r');
 
     private final AccesoRepository accesoRepository;
@@ -189,12 +192,17 @@ public class PanelService {
 
     @Transactional(readOnly = true)
     public ReporteCargoResponseDTO reportePorCargo(String cargo) {
-        if (!Usuario.CARGOS_VALIDOS.contains(cargo)) {
+        List<String> cargos;
+        if (PERSONAL.equals(cargo)) {
+            cargos = Usuario.CARGOS_VALIDOS.stream().filter(c -> !CARGOS_FORMACION.contains(c)).toList();
+        } else if (Usuario.CARGOS_VALIDOS.contains(cargo)) {
+            cargos = List.of(cargo);
+        } else {
             throw new DatoInvalidoException("Cargo no válido");
         }
         LocalDate hoy = LocalDate.now(reloj);
-        List<Object[]> filas = accesoRepository.accesosDePersonas(hoy.minusDays(6).atStartOfDay(),
-                hoy.plusDays(1).atStartOfDay(), cargo, "");
+        List<Object[]> filas = accesoRepository.accesosDeCargos(hoy.minusDays(6).atStartOfDay(),
+                hoy.plusDays(1).atStartOfDay(), cargos);
         Map<String, Long> hoyConteo = new HashMap<>();
         Map<String, Long> semana = new HashMap<>();
         for (Object[] fila : filas) {
@@ -213,7 +221,7 @@ public class PanelService {
                 ? "Aún no hay ingresos de personas con cargo " + cargo + " el día de hoy."
                 : "Hoy la mayoría de ingresos son de " + conteoHoy.get(0).grupo() + " con " + conteoHoy.get(0).total() + " registros.";
 
-        List<Usuario> personas = usuarioRepository.findByCargoOrderByNombre(cargo);
+        List<Usuario> personas = usuarioRepository.findByCargoInOrderByNombre(cargos);
         List<PersonaAdentro> adentro = new ArrayList<>();
         if (!personas.isEmpty()) {
             Set<Long> ids = Set.copyOf(accesoRepository.quienesEstanAdentro(Acceso.USUARIO,
@@ -224,7 +232,7 @@ public class PanelService {
                             .findFirstByReferenciaIdAndTipoReferenciaOrderByFechaDescIdDesc(u.getId(), Acceso.USUARIO)
                             .map(Acceso::getFecha).orElse(null);
                     adentro.add(new PersonaAdentro(u.getId(), u.getNombre(), u.getDocumento(),
-                            u.programaCarnet(), u.numeroFicha(), ingreso));
+                            PERSONAL.equals(cargo) ? u.getCargo() : u.programaCarnet(), u.numeroFicha(), ingreso));
                 }
             }
         }
@@ -232,6 +240,9 @@ public class PanelService {
     }
 
     private static String grupoDe(Usuario u, String cargo) {
+        if (PERSONAL.equals(cargo)) {
+            return u.getCargo() == null ? "Cargo no registrado" : u.getCargo();
+        }
         if ("Aprendiz".equals(cargo)) {
             String programa = u.programaCarnet() == null ? "Sin programa" : u.programaCarnet();
             return programa + " (ficha " + (u.numeroFicha() == null ? "sin ficha" : u.numeroFicha()) + ")";
