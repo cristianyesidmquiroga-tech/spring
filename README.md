@@ -79,6 +79,22 @@ los dos y están en `entity/Usuario.java`:
 | GET | /api/admin/fotos/pendientes | Admin |
 | POST | /api/admin/fotos/{id}/revision | Admin |
 
+## Rutas de la fase 2 (portería)
+
+| Método | Ruta | Quién |
+|---|---|---|
+| GET | /api/porteria/verificar?codigo= | quien opera portería |
+| POST | /api/porteria/movimientos | quien opera portería |
+| POST | /api/porteria/incidentes | quien opera portería |
+| GET, POST, PUT | /api/porteria/pases/... (visitantes, vehículos, objetos) | quien opera portería |
+| GET | /api/porteria/panel, /panel/accesos, /panel/exportar, /panel/reportes/{cargo} | quien opera portería |
+| GET | /api/historial | cada quien el suyo; portería e instructores el de otros |
+| GET, POST, DELETE | /api/equipos | la persona dueña (el celador no registra equipos) |
+
+El escáner reconoce el documento del carnet y los códigos `SENA-VISIT:`, `SENA-VEH-S:`, `SENA-VEH-E:`
+y `SENA-OBJ:`. Una doble entrada o una salida sin entrada se rechaza (409) y queda en la auditoría.
+A las 00:00:05 se registra la salida de todo lo que quedó adentro y se cierran los pases del día.
+
 ## Seguridad
 
 - Contraseñas con BCrypt, mínimo 8 caracteres combinando letras y números.

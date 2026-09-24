@@ -55,6 +55,19 @@ public class Auditoria {
         this.fecha = fecha;
     }
 
+    public Auditoria(Long usuarioId, String nombreUsuario, String tablaAfectada, Long registroId, String accion,
+                     String autorizadoPor, String motivo, String detalles, LocalDateTime fecha) {
+        this.usuarioId = usuarioId;
+        this.nombreUsuario = nombreUsuario;
+        this.tablaAfectada = tablaAfectada;
+        this.registroId = registroId;
+        this.accion = accion;
+        this.autorizadoPor = autorizadoPor;
+        this.motivo = motivo;
+        this.detalles = detalles;
+        this.fecha = fecha;
+    }
+
     public Long getId() { return id; }
     public String getNombreUsuario() { return nombreUsuario; }
     public String getTablaAfectada() { return tablaAfectada; }

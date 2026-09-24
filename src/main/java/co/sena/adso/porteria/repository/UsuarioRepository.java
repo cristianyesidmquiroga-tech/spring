@@ -34,4 +34,28 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
                          @Param("cargo") String cargo, Pageable pageable);
 
     List<Usuario> findByFotoEstadoOrderByFotoFechaSubidaAsc(String fotoEstado);
+
+    Optional<Usuario> findByDocumento(String documento);
+
+    long countByCargo(String cargo);
+
+    long countByRolNombre(String rolNombre);
+
+    List<Usuario> findByCargoOrderByNombre(String cargo);
+
+    @Query("SELECT DISTINCT u.ficha FROM Usuario u WHERE u.ficha IS NOT NULL AND u.ficha <> '' ORDER BY u.ficha")
+    List<String> fichasEnUso();
+
+    // El patrón llega con % y _ ya escapados: buscar "%" no debe traer a todo el centro
+    @Query("""
+            SELECT u FROM Usuario u
+            WHERE (:filtrarIds = false OR u.id IN :ids)
+              AND (:ficha = '' OR u.ficha = :ficha)
+              AND (:cargo = '' OR u.cargo = :cargo)
+              AND (:patron = '' OR lower(u.nombre) LIKE :patron ESCAPE '\\' OR u.documento LIKE :patron ESCAPE '\\')
+            ORDER BY u.nombre
+            """)
+    List<Usuario> buscarParaHistorial(@Param("filtrarIds") boolean filtrarIds, @Param("ids") List<Long> ids,
+                                      @Param("ficha") String ficha, @Param("cargo") String cargo,
+                                      @Param("patron") String patron, Pageable pageable);
 }

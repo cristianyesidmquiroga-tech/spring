@@ -10,6 +10,7 @@ import co.sena.adso.porteria.entity.Usuario;
 import co.sena.adso.porteria.exception.BusinessException;
 import co.sena.adso.porteria.exception.DatoInvalidoException;
 import co.sena.adso.porteria.exception.ResourceNotFoundException;
+import co.sena.adso.porteria.repository.AccesoRepository;
 import co.sena.adso.porteria.repository.FichaRepository;
 import co.sena.adso.porteria.repository.RolRepository;
 import co.sena.adso.porteria.repository.UsuarioRepository;
@@ -30,6 +31,7 @@ public class UsuarioAdminService {
     private final UsuarioRepository usuarioRepository;
     private final RolRepository rolRepository;
     private final FichaRepository fichaRepository;
+    private final AccesoRepository accesoRepository;
     private final DocumentoService documentoService;
     private final AuthService authService;
     private final AuditoriaService auditoriaService;
@@ -38,12 +40,14 @@ public class UsuarioAdminService {
     private final Clock reloj;
 
     public UsuarioAdminService(UsuarioRepository usuarioRepository, RolRepository rolRepository,
-                               FichaRepository fichaRepository, DocumentoService documentoService,
+                               FichaRepository fichaRepository, AccesoRepository accesoRepository,
+                               DocumentoService documentoService,
                                AuthService authService, AuditoriaService auditoriaService, FotoService fotoService,
                                PasswordEncoder passwordEncoder, Clock reloj) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.fichaRepository = fichaRepository;
+        this.accesoRepository = accesoRepository;
         this.documentoService = documentoService;
         this.authService = authService;
         this.auditoriaService = auditoriaService;
@@ -147,6 +151,8 @@ public class UsuarioAdminService {
         String foto = usuario.getFoto();
         auditoriaService.registrar(admin, TABLA, id, "Eliminación permanente",
                 autorizacion.autorizadoPor(), autorizacion.motivo(), "Eliminación del perfil de " + descripcion);
+        // accesos no tiene clave foránea hacia usuarios (la referencia es polimórfica): se borran aparte
+        accesoRepository.borrarDeUsuario(id);
         usuarioRepository.delete(usuario);
         fotoService.borrar(foto);
     }

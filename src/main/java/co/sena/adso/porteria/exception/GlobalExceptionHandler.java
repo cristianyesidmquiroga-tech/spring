@@ -82,6 +82,11 @@ public class GlobalExceptionHandler {
         return responder(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), req, null, null);
     }
 
+    @ExceptionHandler(ConflictoException.class)
+    public ResponseEntity<ErrorResponseDTO> conflictoDeEstado(ConflictoException ex, HttpServletRequest req) {
+        return responder(HttpStatus.CONFLICT, ex.getMessage(), req, null, null);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> conflicto(DataIntegrityViolationException ex, HttpServletRequest req) {
         return responder(HttpStatus.CONFLICT,

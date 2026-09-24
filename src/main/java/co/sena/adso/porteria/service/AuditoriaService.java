@@ -24,6 +24,11 @@ public class AuditoriaService {
                 limpiar(autorizadoPor), limpiar(motivo), detalles, LocalDateTime.now(reloj)));
     }
 
+    /** Acciones que hace el propio sistema, sin una persona detrás (por ejemplo el cierre de medianoche). */
+    public void registrarSistema(String tabla, String accion, String detalles, LocalDateTime fecha) {
+        auditoriaRepository.save(new Auditoria(null, "SISTEMA", tabla, 0L, accion, null, null, detalles, fecha));
+    }
+
     private static String limpiar(String texto) {
         return texto == null || texto.isBlank() ? null : texto.trim();
     }
