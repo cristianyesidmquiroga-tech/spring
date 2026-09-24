@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 
 class CarnetServiceTest {
 
-    private final CarnetService carnet = new CarnetService();
+    private final CarnetService carnet = new CarnetService("", "Regional Santander", "Centro de Gestión Agroempresarial del Oriente",
+            "Aseguradora Aurora", "601-7443718 Op. 1", "100603", new CodigoBarrasService());
 
     @Test
     void celadorSaleComoContratista() {

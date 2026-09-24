@@ -68,7 +68,7 @@ los dos y están en `entity/Usuario.java`:
 | POST | /api/auth/login | público |
 | POST | /api/auth/logout, /api/auth/renovar | con sesión |
 | GET | /api/auth/yo | con sesión |
-| POST | /api/auth/cambiar-contrasena | con sesión |
+| POST | /api/auth/cambiar-contrasena | solo quien tiene contraseña temporal |
 | GET, PUT | /api/perfil | con sesión |
 | POST | /api/perfil/foto | con sesión |
 | GET | /api/perfil/carnet | con sesión |
@@ -76,7 +76,7 @@ los dos y están en `entity/Usuario.java`:
 | GET | /api/catalogos | con sesión |
 | GET, POST, PUT, DELETE | /api/admin/usuarios | Admin |
 | POST | /api/admin/usuarios/{id}/desbloquear | Admin |
-| GET | /api/admin/fotos/pendientes | Admin |
+| GET | /api/admin/fotos?estado=&pagina= (pendiente, aprobada, rechazada, todos; 24 por página) | Admin |
 | POST | /api/admin/fotos/{id}/revision | Admin |
 
 ## Rutas de la fase 2 (portería)
@@ -86,8 +86,8 @@ los dos y están en `entity/Usuario.java`:
 | GET | /api/porteria/verificar?codigo= | quien opera portería |
 | POST | /api/porteria/movimientos | quien opera portería |
 | POST | /api/porteria/incidentes | quien opera portería |
-| GET, POST, PUT | /api/porteria/pases/... (visitantes, vehículos, objetos) | quien opera portería |
-| GET | /api/porteria/panel, /panel/accesos, /panel/exportar, /panel/reportes/{cargo} | quien opera portería |
+| GET, POST, PUT | /api/porteria/pases/... (visitantes, vehículos, objetos) | quien opera portería; un objeto solo lo edita quien lo creó o un Admin |
+| GET | /api/porteria/panel, /panel/accesos, /panel/exportar, /panel/reportes/{cargo o Personal} | quien opera portería |
 | GET | /api/historial | cada quien el suyo; portería e instructores el de otros |
 | GET, POST, DELETE | /api/equipos | la persona dueña (el celador no registra equipos) |
 
@@ -102,13 +102,19 @@ A las 00:00:05 se registra la salida de todo lo que quedó adentro y se cierran 
 - Sesión única: iniciar sesión en otro equipo invalida el token anterior.
 - El token dura 12 horas para quien opera portería y 10 minutos para el resto (el frontend lo renueva mientras hay actividad).
 - La contraseña temporal se debe cambiar antes de usar cualquier otra ruta.
-- Límites de peticiones por IP o por usuario (`config/LimitePeticionesFilter.java`).
-- Cada campo tiene límite de caracteres y se rechazan campos que no estén en el contrato.
-- Las fotos se guardan fuera de carpetas públicas, se re-codifican (sin metadatos GPS) y solo se entregan con permiso.
+- Límites de peticiones por IP real (detrás del proxy) o por usuario, con aviso y `Retry-After` (`config/LimitePeticionesFilter.java`).
+- Cada campo tiene límite de caracteres, se rechazan campos que no estén en el contrato y se quitan etiquetas HTML del texto libre.
+- Las fotos (JPG, PNG o WEBP) se guardan fuera de carpetas públicas, se re-codifican a 512 px sin metadatos GPS y solo se entregan con permiso. La foto rechazada se borra.
 - Toda acción del administrador queda en la tabla `auditoria`.
 
 ## Pruebas
 
+Migradas una a una desde las pruebas pytest de Portería 2 a JUnit 5, con la misma división en carpetas
+(`modulos`, `roles`, `vistas`). La equivalencia completa está en `docs/PRUEBAS.md`. Necesitan Docker
+encendido (Testcontainers levanta un PostgreSQL 16 desechable) y GitHub Actions las corre en cada push.
+
 ```
-.\mvnw.cmd test
+.\mvnw.cmd verify
 ```
+
+El informe de cobertura queda en `target/site/jacoco/index.html`.
