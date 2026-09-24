@@ -95,6 +95,21 @@ El escáner reconoce el documento del carnet y los códigos `SENA-VISIT:`, `SENA
 y `SENA-OBJ:`. Una doble entrada o una salida sin entrada se rechaza (409) y queda en la auditoría.
 A las 00:00:05 se registra la salida de todo lo que quedó adentro y se cierran los pases del día.
 
+## Rutas de la fase 3 (formación)
+
+| Método | Ruta | Quién |
+|---|---|---|
+| GET, POST, PUT | /api/admin/fichas | Admin |
+| PATCH | /api/admin/fichas/{id}/archivar (archiva o reactiva) | Admin |
+| GET | /api/admin/clases?ficha= (últimos 100 registros) | Admin |
+| GET, POST | /api/asistencia?ficha= | instructores y Admin |
+| GET, POST | /api/comunicados | instructores y Admin |
+| GET | /api/ambientes, /api/ambientes/{ficha} | Coordinación, Subdirección y Admin |
+
+La lista de clase solo trae aprendices de la ficha que cruzaron portería hoy; guardarla otra vez el mismo
+día reemplaza la anterior. Los comunicados salen por correo (variables `SMTP_*`); sin `SMTP_HOST` la API
+responde a quién no se le pudo enviar.
+
 ## Seguridad
 
 - Contraseñas con BCrypt, mínimo 8 caracteres combinando letras y números.

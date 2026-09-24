@@ -59,6 +59,8 @@ public class SecurityConfig {
                     .requestMatchers("/api/admin/**").hasAuthority("ADMIN")
                     // Por ruta y no solo con @PreAuthorize: así un perfil sin permiso no ve errores de validación
                     .requestMatchers("/api/porteria/**").hasAuthority("OPERAR_PORTERIA")
+                    .requestMatchers("/api/asistencia/**", "/api/comunicados/**").hasAuthority("GESTIONAR_ASISTENCIA")
+                    .requestMatchers("/api/ambientes/**").hasAuthority("VER_AMBIENTES")
                     .anyRequest().authenticated());
         } else {
             http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
@@ -91,7 +93,7 @@ public class SecurityConfig {
             @Value("${app.cors.origenes:http://localhost:5173}") List<String> origenes) {
         CorsConfiguration cors = new CorsConfiguration();
         cors.setAllowedOrigins(origenes);
-        cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        cors.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         cors.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 
         UrlBasedCorsConfigurationSource fuente = new UrlBasedCorsConfigurationSource();

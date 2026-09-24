@@ -54,7 +54,7 @@ public class Usuario {
     @Column(unique = true, length = 20)
     private String documento;
 
-    @Column(length = 100)
+    @Column(length = 150)
     private String programa;
 
     // Número de ficha en texto, para quien no tiene la ficha enlazada
@@ -178,6 +178,11 @@ public class Usuario {
 
     public String programaCarnet() {
         return fichaRef != null ? fichaRef.getPrograma() : programa;
+    }
+
+    // Solo la ficha tiene fecha: el texto histórico nunca la guardó
+    public String fechaFinalizacionCarnet() {
+        return fichaRef != null ? fichaRef.fechaFinalizacionTexto() : "";
     }
 
     private boolean rolEs(String nombreRol) {

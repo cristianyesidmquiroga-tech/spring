@@ -68,6 +68,12 @@ class PorteriaTest extends PruebaIntegracion {
     }
 
     @Test
+    void aprendizNoGestionaAsistencia() throws Exception {
+        Sesion aprendiz = entrarComo(Perfil.APRENDIZ);
+        mvc.perform(con(aprendiz, get("/api/asistencia"))).andExpect(status().isForbidden());
+    }
+
+    @Test
     void celadorNoEntraAGestionDeUsuarios() throws Exception {
         Sesion celador = entrarComo(Perfil.CELADOR);
         mvc.perform(con(celador, get("/api/admin/usuarios"))).andExpect(status().isForbidden());

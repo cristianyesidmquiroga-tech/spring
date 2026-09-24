@@ -108,12 +108,11 @@ public class CarnetService {
         String perfil = perfilDeCargo(u.getCargo());
         String documento = u.getDocumento() == null ? ""
                 : ABREVIATURAS.getOrDefault(u.getTipoDocumento(), "C.C.") + " " + u.getDocumento();
-        String fechaFin = u.getFichaRef() != null ? u.getFichaRef().fechaFinalizacionTexto() : "";
         boolean activo = u.isPerfilCompleto() && u.getDocumento() != null;
         // La póliza estudiantil solo va en el carnet del aprendiz
         boolean aprendiz = APRENDIZ.equals(perfil);
         return new CarnetResponseDTO(activo, perfil, nombre[0], nombre[1], documento, u.getTipoSangre(),
-                u.numeroFicha(), u.programaCarnet(), fechaFin, activo ? u.getDocumento() : null,
+                u.numeroFicha(), u.programaCarnet(), u.fechaFinalizacionCarnet(),activo ? u.getDocumento() : null,
                 activo ? codigoBarras.svg(u.getDocumento(), false) : null,
                 generalidades.regional(), generalidades.centro(),
                 aprendiz ? generalidades.aseguradora() : null, aprendiz ? generalidades.aseguradoraTel() : null,

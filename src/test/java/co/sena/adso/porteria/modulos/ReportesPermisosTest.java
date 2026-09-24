@@ -79,6 +79,31 @@ class ReportesPermisosTest extends PruebaIntegracion {
     }
 
     @Test
+    void aprendizNoEntra() throws Exception {
+        Sesion aprendiz = entrarComo(Perfil.APRENDIZ);
+        mvc.perform(con(aprendiz, get("/api/admin/clases"))).andExpect(status().isForbidden());
+    }
+
+    // Solo para administradores: ni el celador que opera portería la ve
+    @Test
+    void celadorNoEntra() throws Exception {
+        Sesion celador = entrarComo(Perfil.CELADOR);
+        mvc.perform(con(celador, get("/api/admin/clases"))).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void adminEntra() throws Exception {
+        Sesion admin = entrarComo(Perfil.ADMIN);
+        mvc.perform(con(admin, get("/api/admin/clases"))).andExpect(status().isOk());
+    }
+
+    @Test
+    void adminBuscaPorFicha() throws Exception {
+        Sesion admin = entrarComo(Perfil.ADMIN);
+        mvc.perform(con(admin, get("/api/admin/clases").param("ficha", "999999"))).andExpect(status().isOk());
+    }
+
+    @Test
     void aprendizNoExporta() throws Exception {
         Sesion aprendiz = entrarComo(Perfil.APRENDIZ);
         mvc.perform(con(aprendiz, get("/api/porteria/panel/exportar"))).andExpect(status().isForbidden());

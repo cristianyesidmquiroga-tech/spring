@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -71,6 +73,9 @@ public abstract class PruebaIntegracion {
     @Autowired
     private LimitePeticionesFilter limitador;
 
+    @Autowired
+    private Clock relojApi;
+
     @Value("${app.fotos.carpeta}")
     private String carpetaFotos;
 
@@ -79,8 +84,14 @@ public abstract class PruebaIntegracion {
 
     @BeforeEach
     void baseLimpia() throws IOException {
-        jdbc.execute("TRUNCATE accesos, equipos, visitantes, vehiculos, objetos_externos, auditoria, usuarios "
-                + "RESTART IDENTITY CASCADE");
+        jdbc.execute("TRUNCATE accesos, equipos, visitantes, vehiculos, objetos_externos, auditoria, usuarios, "
+                + "asistencia_clases, fichas RESTART IDENTITY CASCADE");
+        // Las mismas fichas que siembra V1
+        jdbc.execute("""
+                INSERT INTO fichas (numero, programa, fecha_finalizacion) VALUES
+                ('2977385', 'Análisis y Desarrollo de Software', '2027-06-30'),
+                ('3235642', 'Análisis y Desarrollo de Software', '2027-12-15'),
+                ('2890114', 'Gestión Contable y de Información Financiera', '2026-12-10')""");
         reiniciarLimitador();
         borrarFotos();
     }
@@ -115,6 +126,21 @@ public abstract class PruebaIntegracion {
 
     protected Usuario crearUsuario() {
         return crearUsuario("aprendiz@sena.edu.co", "123456");
+    }
+
+    // Aprendiz de la ficha 2758291, la que usan las vistas de formación
+    protected Usuario aprendizDeFicha() {
+        return crearUsuario("aprendiz.ficha@sena.edu.co", "Aprendiz", "Usuario", "3000000001", u -> {
+            u.setNombre("Aprendiz Buscado");
+            u.setFicha("2758291");
+            u.setPrograma("Sistemas");
+        });
+    }
+
+    // Como Acceso(punto_id=1, tipo='Entrada') de pytest, con la hora de Colombia que usa la API
+    protected void registrarEntradaHoy(Usuario persona) {
+        jdbc.update("INSERT INTO accesos (punto_id, referencia_id, tipo_referencia, tipo, fecha) "
+                + "VALUES (1, ?, 'Usuario', 'Entrada', ?)", persona.getId(), LocalDateTime.now(relojApi));
     }
 
     protected Sesion entrarComo(Perfil perfil) throws Exception {

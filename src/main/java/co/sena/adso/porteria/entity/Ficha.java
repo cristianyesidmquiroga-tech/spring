@@ -35,6 +35,21 @@ public class Ficha {
     protected Ficha() {
     }
 
+    public Ficha(String numero, String programa, LocalDate fechaFinalizacion) {
+        actualizar(numero, programa, fechaFinalizacion);
+    }
+
+    public void actualizar(String numero, String programa, LocalDate fechaFinalizacion) {
+        this.numero = numero;
+        this.programa = programa;
+        this.fechaFinalizacion = fechaFinalizacion;
+    }
+
+    // Nunca se borra: sus aprendices la siguen usando en el carnet
+    public void alternarActiva() {
+        activa = !activa;
+    }
+
     public String fechaFinalizacionTexto() {
         return fechaFinalizacion == null ? "" : fechaFinalizacion.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }

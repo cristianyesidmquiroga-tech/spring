@@ -39,7 +39,7 @@ Las demás (carnet, equipos, escaner, login, panel, pases, perfil, reportes, y l
 ## Estados
 
 - **Migrada**: existe el método Java y pasa.
-- **Programada fase N**: la función todavía no existe en Spring. Fase 3, formación: fichas, asistencia, historial de clases, ambientes y comunicados. Fase 4, soporte: mensajes, bandeja, centro de ayuda y tutorial. Fase 5, cuentas y operación: registro, verificación de correo, recuperación, historial de cambios, respaldos, importación de Excel, captcha y política de privacidad.
+- **Programada fase N**: la función todavía no existe en Spring. Fase 4, soporte: mensajes, bandeja, centro de ayuda y tutorial. Fase 5, cuentas y operación: registro, verificación de correo, recuperación, historial de cambios, respaldos, importación de Excel, captcha y política de privacidad.
 - **Descartada**: no se migra por una decisión explícita; debajo de la tabla del archivo van el motivo y la fecha.
 
 Cada clase Java empieza con el comentario `// Portería 2: tests/<ruta>.py`, que es el archivo que se lista en cada sección.
@@ -273,28 +273,28 @@ Java: `modulos.EscaneoPuertaTest`
 
 ### tests/modulos/test_fichas.py
 
-Java: sin clase todavía
+Java: `modulos.FichasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_el_aprendiz_hereda_programa_y_fecha` | — | Programada fase 3 |
-| `test_cambiar_la_ficha_cambia_el_carnet_de_todos_sus_aprendices` | — | Programada fase 3 |
-| `test_sin_ficha_enlazada_se_usa_el_texto_historico` | — | Programada fase 3 |
-| `test_una_ficha_sin_fecha_no_revienta` | — | Programada fase 3 |
-| `test_al_elegir_ficha_se_copian_numero_y_programa` | — | Programada fase 3 |
-| `test_una_ficha_inexistente_se_rechaza` | — | Programada fase 3 |
-| `test_el_aprendiz_no_puede_escribir_su_programa` | — | Programada fase 3 |
-| `test_un_admin_entra` | — | Programada fase 3 |
-| `test_quien_no_es_admin_no_entra` (casos: Aprendiz, Instructor, Celador, Administrativo, Administrador) | — | Programada fase 3 |
-| `test_sin_sesion_redirige_al_login` | — | Programada fase 3 |
-| `test_las_acciones_de_escritura_tambien_exigen_admin` (casos: crear, editar, archivar) | — | Programada fase 3 |
-| `test_crear_editar_y_archivar` | — | Programada fase 3 |
-| `test_no_se_admiten_numeros_de_ficha_invalidos` | — | Programada fase 3 |
-| `test_no_se_repite_el_numero_de_ficha` | — | Programada fase 3 |
-| `test_una_fecha_invalida_no_crea_la_ficha` | — | Programada fase 3 |
-| `test_archivar_no_borra_la_ficha_de_sus_aprendices` | — | Programada fase 3 |
-| `test_al_crear_usuario_se_enlaza_la_ficha_existente` | — | Programada fase 3 |
-| `test_una_ficha_no_registrada_no_se_inventa` | — | Programada fase 3 |
+| `test_el_aprendiz_hereda_programa_y_fecha` | `FichasTest.HerenciaDesdeLaFicha#elAprendizHeredaProgramaYFecha` | Migrada |
+| `test_cambiar_la_ficha_cambia_el_carnet_de_todos_sus_aprendices` | `FichasTest.HerenciaDesdeLaFicha#cambiarLaFichaCambiaElCarnetDeTodosSusAprendices` | Migrada |
+| `test_sin_ficha_enlazada_se_usa_el_texto_historico` | `FichasTest.HerenciaDesdeLaFicha#sinFichaEnlazadaSeUsaElTextoHistorico` | Migrada |
+| `test_una_ficha_sin_fecha_no_revienta` | `FichasTest.HerenciaDesdeLaFicha#unaFichaSinFechaNoRevienta` | Migrada |
+| `test_al_elegir_ficha_se_copian_numero_y_programa` | `FichasTest.ElAprendizEligeFichaEnSuPerfil#alElegirFichaSeCopianNumeroYPrograma` | Migrada |
+| `test_una_ficha_inexistente_se_rechaza` | `FichasTest.ElAprendizEligeFichaEnSuPerfil#unaFichaInexistenteSeRechaza` | Migrada |
+| `test_el_aprendiz_no_puede_escribir_su_programa` | `FichasTest.ElAprendizEligeFichaEnSuPerfil#elAprendizNoPuedeEscribirSuPrograma` | Migrada |
+| `test_un_admin_entra` | `FichasTest.PermisosDeLaPantallaDeFichas#unAdminEntra` | Migrada |
+| `test_quien_no_es_admin_no_entra` (casos: Aprendiz, Instructor, Celador, Administrativo, Administrador) | `FichasTest.PermisosDeLaPantallaDeFichas#quienNoEsAdminNoEntra` | Migrada |
+| `test_sin_sesion_redirige_al_login` | `FichasTest.PermisosDeLaPantallaDeFichas#sinSesionRedirigeAlLogin` | Migrada |
+| `test_las_acciones_de_escritura_tambien_exigen_admin` (casos: crear, editar, archivar) | `FichasTest.PermisosDeLaPantallaDeFichas#lasAccionesDeEscrituraTambienExigenAdmin` | Migrada |
+| `test_crear_editar_y_archivar` | `FichasTest.GestionDeFichas#crearEditarYArchivar` | Migrada |
+| `test_no_se_admiten_numeros_de_ficha_invalidos` | `FichasTest.GestionDeFichas#noSeAdmitenNumerosDeFichaInvalidos` | Migrada |
+| `test_no_se_repite_el_numero_de_ficha` | `FichasTest.GestionDeFichas#noSeRepiteElNumeroDeFicha` | Migrada |
+| `test_una_fecha_invalida_no_crea_la_ficha` | `FichasTest.GestionDeFichas#unaFechaInvalidaNoCreaLaFicha` | Migrada |
+| `test_archivar_no_borra_la_ficha_de_sus_aprendices` | `FichasTest.GestionDeFichas#archivarNoBorraLaFichaDeSusAprendices` | Migrada |
+| `test_al_crear_usuario_se_enlaza_la_ficha_existente` | `FichasTest.AltaDesdeAdministracion#alCrearUsuarioSeEnlazaLaFichaExistente` | Migrada |
+| `test_una_ficha_no_registrada_no_se_inventa` | `FichasTest.AltaDesdeAdministracion#unaFichaNoRegistradaNoSeInventa` | Migrada |
 
 ### tests/modulos/test_historial_persona.py
 
@@ -379,8 +379,8 @@ Java: `modulos.IntegridadTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_con_asistencias` | — | Programada fase 3 |
-| `test_instructor_con_clases_dictadas` | — | Programada fase 3 |
+| `test_con_asistencias` | `IntegridadTest#conAsistencias` | Migrada |
+| `test_instructor_con_clases_dictadas` | `IntegridadTest#instructorConClasesDictadas` | Migrada |
 | `test_con_mensajes` | — | Programada fase 4 |
 | `test_operador_de_porteria` | `IntegridadTest#operadorDePorteria` | Migrada |
 | `test_celador_con_turnos_de_la_tabla_retirada` | — | Descartada |
@@ -503,7 +503,7 @@ Java: `modulos.PorteriaTest`
 | `test_aprendiz_no_entra_al_escaner` | `PorteriaTest#aprendizNoEntraAlEscaner` | Migrada |
 | `test_celador_entra_al_escaner` | `PorteriaTest#celadorEntraAlEscaner` | Migrada |
 | `test_aprendiz_no_registra_movimientos` | `PorteriaTest#aprendizNoRegistraMovimientos` | Migrada |
-| `test_aprendiz_no_gestiona_asistencia` | — | Programada fase 3 |
+| `test_aprendiz_no_gestiona_asistencia` | `PorteriaTest#aprendizNoGestionaAsistencia` | Migrada |
 | `test_celador_no_entra_a_gestion_de_usuarios` | `PorteriaTest#celadorNoEntraAGestionDeUsuarios` | Migrada |
 | `test_entrada_valida_se_registra` | `PorteriaTest#entradaValidaSeRegistra` | Migrada |
 | `test_doble_entrada_se_rechaza_y_se_audita` | `PorteriaTest#dobleEntradaSeRechazaYSeAudita` | Migrada |
@@ -526,10 +526,10 @@ Java: `modulos.ReportesPermisosTest`
 | `test_celador_entra_a_analytics` | `ReportesPermisosTest#celadorEntraAAnalytics` | Migrada |
 | `test_admin_entra_a_analytics` | `ReportesPermisosTest#adminEntraAAnalytics` | Migrada |
 | `test_no_autenticado_no_entra_a_analytics` | `ReportesPermisosTest#noAutenticadoNoEntraAAnalytics` | Migrada |
-| `test_aprendiz_no_entra` | — | Programada fase 3 |
-| `test_celador_no_entra` | — | Programada fase 3 |
-| `test_admin_entra` | — | Programada fase 3 |
-| `test_admin_busca_por_ficha` | — | Programada fase 3 |
+| `test_aprendiz_no_entra` | `ReportesPermisosTest#aprendizNoEntra` | Migrada |
+| `test_celador_no_entra` | `ReportesPermisosTest#celadorNoEntra` | Migrada |
+| `test_admin_entra` | `ReportesPermisosTest#adminEntra` | Migrada |
+| `test_admin_busca_por_ficha` | `ReportesPermisosTest#adminBuscaPorFicha` | Migrada |
 | `test_aprendiz_no_exporta` | `ReportesPermisosTest#aprendizNoExporta` | Migrada |
 | `test_celador_exporta` | `ReportesPermisosTest#celadorExporta` | Migrada |
 | `test_sin_rango_de_fechas_no_exporta` | `ReportesPermisosTest#sinRangoDeFechasNoExporta` | Migrada |
@@ -605,21 +605,21 @@ Java: sin clase todavía
 
 ### tests/roles/admin/test_ambientes.py
 
-Java: sin clase todavía
+Java: `roles.admin.AmbientesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_ambientes` | — | Programada fase 3 |
-| `test_ve_el_detalle_de_un_ambiente` | — | Programada fase 3 |
+| `test_entra_a_ambientes` | `AmbientesTest#entraAAmbientes` | Migrada |
+| `test_ve_el_detalle_de_un_ambiente` | `AmbientesTest#veElDetalleDeUnAmbiente` | Migrada |
 
 ### tests/roles/admin/test_asistencia.py
 
-Java: sin clase todavía
+Java: `roles.admin.AsistenciaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_asistencia` | — | Programada fase 3 |
-| `test_busca_una_ficha` | — | Programada fase 3 |
+| `test_entra_a_asistencia` | `AsistenciaTest#entraAAsistencia` | Migrada |
+| `test_busca_una_ficha` | `AsistenciaTest#buscaUnaFicha` | Migrada |
 
 ### tests/roles/admin/test_ayuda.py
 
@@ -660,12 +660,12 @@ Java: `roles.admin.CerrarSesionTest`
 
 ### tests/roles/admin/test_comunicados.py
 
-Java: sin clase todavía
+Java: `roles.admin.ComunicadosTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_comunicados` | — | Programada fase 3 |
-| `test_enviar_sin_destinatarios_se_rechaza` | — | Programada fase 3 |
+| `test_entra_a_comunicados` | `ComunicadosTest#entraAComunicados` | Migrada |
+| `test_enviar_sin_destinatarios_se_rechaza` | `ComunicadosTest#enviarSinDestinatariosSeRechaza` | Migrada |
 
 ### tests/roles/admin/test_equipos.py
 
@@ -688,12 +688,12 @@ Java: `roles.admin.EscanerTest`
 
 ### tests/roles/admin/test_fichas.py
 
-Java: sin clase todavía
+Java: `roles.admin.FichasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_fichas` | — | Programada fase 3 |
-| `test_crea_una_ficha` | — | Programada fase 3 |
+| `test_entra_a_fichas` | `FichasTest#entraAFichas` | Migrada |
+| `test_crea_una_ficha` | `FichasTest#creaUnaFicha` | Migrada |
 
 ### tests/roles/admin/test_gestion_usuarios.py
 
@@ -715,12 +715,12 @@ Java: sin clase todavía
 
 ### tests/roles/admin/test_historial_clases.py
 
-Java: sin clase todavía
+Java: `roles.admin.HistorialClasesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_historial_de_clases` | — | Programada fase 3 |
-| `test_busca_una_ficha` | — | Programada fase 3 |
+| `test_entra_al_historial_de_clases` | `HistorialClasesTest#entraAlHistorialDeClases` | Migrada |
+| `test_busca_una_ficha` | `HistorialClasesTest#buscaUnaFicha` | Migrada |
 
 ### tests/roles/admin/test_historial_ingresos.py
 
@@ -924,7 +924,7 @@ Java: `roles.administrador.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: gestion_usuarios, revision_fotos; programados: ambientes, asistencia, comunicados, fichas e historial_clases (fase 3); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: gestion_usuarios, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/administrador/test_tutorial.py
 
@@ -1017,7 +1017,7 @@ Java: `roles.administrativo.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos; programados: ambientes, asistencia, comunicados, fichas e historial_clases (fase 3); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/administrativo/test_tutorial.py
 
@@ -1100,7 +1100,7 @@ Java: `roles.aprendiz.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos; programados: ambientes, asistencia, comunicados, fichas e historial_clases (fase 3); bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/aprendiz/test_tutorial.py
 
@@ -1211,7 +1211,7 @@ Java: `roles.celador.RestringidasTest` (cada prueba corre para celador y porteri
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: gestion_usuarios, revision_fotos; programados: ambientes, asistencia, comunicados, fichas e historial_clases (fase 3); bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: gestion_usuarios, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 | `test_no_registra_equipos` | `RestringidasTest#noRegistraEquipos` | Migrada |
 
 ### tests/roles/celador/test_tutorial.py
@@ -1295,7 +1295,7 @@ Java: `roles.contratista.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos; programados: ambientes, asistencia, comunicados, fichas e historial_clases (fase 3); bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/contratista/test_tutorial.py
 
@@ -1308,12 +1308,12 @@ Java: sin clase todavía
 
 ### tests/roles/coordinacion/test_ambientes.py
 
-Java: sin clase todavía
+Java: `roles.coordinacion.AmbientesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_ambientes` | — | Programada fase 3 |
-| `test_ve_el_detalle_de_un_ambiente` | — | Programada fase 3 |
+| `test_entra_a_ambientes` | `AmbientesTest#entraAAmbientes` | Migrada |
+| `test_ve_el_detalle_de_un_ambiente` | `AmbientesTest#veElDetalleDeUnAmbiente` | Migrada |
 
 ### tests/roles/coordinacion/test_ayuda.py
 
@@ -1387,7 +1387,7 @@ Java: `roles.coordinacion.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos; programados: asistencia, comunicados, fichas e historial_clases (fase 3); bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/coordinacion/test_tutorial.py
 
@@ -1470,7 +1470,7 @@ Java: `roles.funcionario.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos; programados: ambientes, asistencia, comunicados, fichas e historial_clases (fase 3); bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/funcionario/test_tutorial.py
 
@@ -1483,12 +1483,12 @@ Java: sin clase todavía
 
 ### tests/roles/instructor/test_asistencia.py
 
-Java: sin clase todavía
+Java: `roles.instructor.AsistenciaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_asistencia` | — | Programada fase 3 |
-| `test_busca_una_ficha` | — | Programada fase 3 |
+| `test_entra_a_asistencia` | `AsistenciaTest#entraAAsistencia` | Migrada |
+| `test_busca_una_ficha` | `AsistenciaTest#buscaUnaFicha` | Migrada |
 
 ### tests/roles/instructor/test_ayuda.py
 
@@ -1519,12 +1519,12 @@ Java: `roles.instructor.CerrarSesionTest`
 
 ### tests/roles/instructor/test_comunicados.py
 
-Java: sin clase todavía
+Java: `roles.instructor.ComunicadosTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_comunicados` | — | Programada fase 3 |
-| `test_enviar_sin_destinatarios_se_rechaza` | — | Programada fase 3 |
+| `test_entra_a_comunicados` | `ComunicadosTest#entraAComunicados` | Migrada |
+| `test_enviar_sin_destinatarios_se_rechaza` | `ComunicadosTest#enviarSinDestinatariosSeRechaza` | Migrada |
 
 ### tests/roles/instructor/test_equipos.py
 
@@ -1571,7 +1571,7 @@ Java: `roles.instructor.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos; programados: ambientes, fichas e historial_clases (fase 3); bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/instructor/test_tutorial.py
 
@@ -1584,12 +1584,12 @@ Java: sin clase todavía
 
 ### tests/roles/subdirector/test_ambientes.py
 
-Java: sin clase todavía
+Java: `roles.subdirector.AmbientesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_ambientes` | — | Programada fase 3 |
-| `test_ve_el_detalle_de_un_ambiente` | — | Programada fase 3 |
+| `test_entra_a_ambientes` | `AmbientesTest#entraAAmbientes` | Migrada |
+| `test_ve_el_detalle_de_un_ambiente` | `AmbientesTest#veElDetalleDeUnAmbiente` | Migrada |
 
 ### tests/roles/subdirector/test_ayuda.py
 
@@ -1663,7 +1663,7 @@ Java: `roles.subdirector.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos; programados: asistencia, comunicados, fichas e historial_clases (fase 3); bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/subdirector/test_tutorial.py
 
@@ -1737,7 +1737,7 @@ Java: `roles.trabajador.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos; programados: ambientes, asistencia, comunicados, fichas e historial_clases (fase 3); bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 | `test_no_registra_equipos` | `RestringidasTest#noRegistraEquipos` | Migrada |
 
 ### tests/roles/trabajador/test_tutorial.py
@@ -1751,24 +1751,24 @@ Java: sin clase todavía
 
 ### tests/vistas/ambientes/test_ambientes.py
 
-Java: sin clase todavía
+Java: `vistas.ambientes.AmbientesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | — | Programada fase 3 |
-| `test_sin_sesion_pide_login` | — | Programada fase 3 |
-| `test_muestra_la_ficha_con_aprendices_adentro` | — | Programada fase 3 |
-| `test_detalle_de_una_ficha` | — | Programada fase 3 |
+| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | `AmbientesTest#accesoSegunElPerfil` | Migrada |
+| `test_sin_sesion_pide_login` | `AmbientesTest#sinSesionPideLogin` | Migrada |
+| `test_muestra_la_ficha_con_aprendices_adentro` | `AmbientesTest#muestraLaFichaConAprendicesAdentro` | Migrada |
+| `test_detalle_de_una_ficha` | `AmbientesTest#detalleDeUnaFicha` | Migrada |
 
 ### tests/vistas/asistencia/test_asistencia.py
 
-Java: sin clase todavía
+Java: `vistas.asistencia.AsistenciaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | — | Programada fase 3 |
-| `test_sin_sesion_pide_login` | — | Programada fase 3 |
-| `test_guarda_la_asistencia_de_la_ficha` | — | Programada fase 3 |
+| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | `AsistenciaTest#accesoSegunElPerfil` | Migrada |
+| `test_sin_sesion_pide_login` | `AsistenciaTest#sinSesionPideLogin` | Migrada |
+| `test_guarda_la_asistencia_de_la_ficha` | `AsistenciaTest#guardaLaAsistenciaDeLaFicha` | Migrada |
 
 ### tests/vistas/ayuda/test_ayuda.py
 
@@ -1826,14 +1826,14 @@ Java: `vistas.sesion.CerrarSesionTest`
 
 ### tests/vistas/comunicados/test_comunicados.py
 
-Java: sin clase todavía
+Java: `vistas.comunicados.ComunicadosTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | — | Programada fase 3 |
-| `test_sin_sesion_pide_login` | — | Programada fase 3 |
-| `test_enviar_sin_permiso_devuelve_403` | — | Programada fase 3 |
-| `test_enviar_sin_destinatarios_se_rechaza` | — | Programada fase 3 |
+| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | `ComunicadosTest#accesoSegunElPerfil` | Migrada |
+| `test_sin_sesion_pide_login` | `ComunicadosTest#sinSesionPideLogin` | Migrada |
+| `test_enviar_sin_permiso_devuelve_403` | `ComunicadosTest#enviarSinPermisoDevuelve403` | Migrada |
+| `test_enviar_sin_destinatarios_se_rechaza` | `ComunicadosTest#enviarSinDestinatariosSeRechaza` | Migrada |
 
 ### tests/vistas/equipos/test_equipos.py
 
@@ -1862,15 +1862,15 @@ Java: `vistas.escaner.EscanerTest`
 
 ### tests/vistas/fichas/test_fichas.py
 
-Java: sin clase todavía
+Java: `vistas.fichas.FichasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | — | Programada fase 3 |
-| `test_sin_sesion_pide_login` | — | Programada fase 3 |
-| `test_crea_edita_y_archiva` | — | Programada fase 3 |
-| `test_numero_invalido_no_se_crea` | — | Programada fase 3 |
-| `test_ficha_repetida_no_se_duplica` | — | Programada fase 3 |
+| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | `FichasTest#accesoSegunElPerfil` | Migrada |
+| `test_sin_sesion_pide_login` | `FichasTest#sinSesionPideLogin` | Migrada |
+| `test_crea_edita_y_archiva` | `FichasTest#creaEditaYArchiva` | Migrada |
+| `test_numero_invalido_no_se_crea` | `FichasTest#numeroInvalidoNoSeCrea` | Migrada |
+| `test_ficha_repetida_no_se_duplica` | `FichasTest#fichaRepetidaNoSeDuplica` | Migrada |
 
 ### tests/vistas/gestion_usuarios/test_gestion_usuarios.py
 
@@ -1899,13 +1899,13 @@ Java: sin clase todavía
 
 ### tests/vistas/historial_clases/test_historial_clases.py
 
-Java: sin clase todavía
+Java: `vistas.clases.HistorialClasesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | — | Programada fase 3 |
-| `test_sin_sesion_pide_login` | — | Programada fase 3 |
-| `test_busca_por_ficha` | — | Programada fase 3 |
+| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | `HistorialClasesTest#accesoSegunElPerfil` | Migrada |
+| `test_sin_sesion_pide_login` | `HistorialClasesTest#sinSesionPideLogin` | Migrada |
+| `test_busca_por_ficha` | `HistorialClasesTest#buscaPorFicha` | Migrada |
 
 ### tests/vistas/historial_ingresos/test_historial_ingresos.py
 
@@ -2076,8 +2076,7 @@ Java: sin clase todavía
 
 | Estado | Funciones pytest |
 |---|---|
-| Migrada | 497 |
-| Programada fase 3 | 62 |
+| Migrada | 559 |
 | Programada fase 4 | 136 |
 | Programada fase 5 | 98 |
 | Descartada | 11 |

@@ -78,7 +78,11 @@ public class PerfilService {
             Ficha ficha = null;
             if (datos.fichaId() != null) {
                 ficha = fichaRepository.findById(datos.fichaId())
-                        .orElseThrow(() -> new ResourceNotFoundException("una ficha", datos.fichaId()));
+                        .orElseThrow(() -> new DatoInvalidoException("La ficha seleccionada no existe."));
+                // Una archivada solo se conserva si ya era la suya
+                if (!ficha.isActiva() && usuario.getFichaRef() != ficha) {
+                    throw new DatoInvalidoException("Esa ficha ya no admite aprendices nuevos.");
+                }
             }
             usuario.asignarFicha(ficha);
         }

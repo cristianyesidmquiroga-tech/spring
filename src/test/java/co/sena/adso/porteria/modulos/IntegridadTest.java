@@ -37,6 +37,44 @@ class IntegridadTest extends PruebaIntegracion {
         return Timestamp.valueOf(LocalDateTime.now());
     }
 
+    private void borrarComoAdmin(Long objetivoId) throws Exception {
+        Sesion admin = entrarComo(Perfil.ADMIN);
+        mvc.perform(conJson(admin, delete("/api/admin/usuarios/{id}", objetivoId),
+                        Map.of("autorizadoPor", "Coordinacion", "motivo", "Prueba de integridad")))
+                .andExpect(status().isNoContent());
+    }
+
+    private void asistencia(Usuario instructor, Usuario aprendiz) {
+        jdbc.update("INSERT INTO asistencia_clases (instructor_id, aprendiz_id, ficha, presente) VALUES (?, ?, '2555001', true)",
+                instructor.getId(), aprendiz.getId());
+    }
+
+    // Un aprendiz con asistencias registradas se puede borrar
+    @Test
+    void conAsistencias() throws Exception {
+        Usuario instructor = crearUsuario("instructor@sena.edu.co", "Instructor", "Usuario", "111", u -> { });
+        Usuario aprendiz = crearUsuario("aprendiz2@sena.edu.co", "222");
+        asistencia(instructor, aprendiz);
+
+        borrarComoAdmin(aprendiz.getId());
+        assertThat(usuarioRepository.findById(aprendiz.getId())).isEmpty();
+        // La asistencia era un dato del aprendiz: se va con él
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM asistencia_clases WHERE aprendiz_id = ?", Long.class,
+                aprendiz.getId())).isZero();
+    }
+
+    // Borrar al instructor no destruye la asistencia de sus aprendices
+    @Test
+    void instructorConClasesDictadas() throws Exception {
+        Usuario instructor = crearUsuario("instructor@sena.edu.co", "Instructor", "Usuario", "111", u -> { });
+        Usuario aprendiz = crearUsuario("aprendiz2@sena.edu.co", "222");
+        asistencia(instructor, aprendiz);
+
+        borrarComoAdmin(instructor.getId());
+        assertThat(jdbc.queryForMap("SELECT instructor_id FROM asistencia_clases WHERE aprendiz_id = ?",
+                aprendiz.getId()).get("instructor_id")).isNull();
+    }
+
     @Test
     void operadorDePorteria() throws Exception {
         Usuario celador = crearUsuario("celador@sena.edu.co", "Celador", "Usuario", "444", u -> { });
@@ -83,12 +121,13 @@ class IntegridadTest extends PruebaIntegracion {
         assertThat(indices("accesos")).contains("fecha");
     }
 
-    // carnet_id y movimientos_* no existen (Spring los unificó en accesos); asistencia_clases llega en la fase 3
+    // carnet_id y movimientos_* no existen: Spring los unificó en accesos
     @Test
     void indicesDeClavesAjenas() {
         assertThat(indices("accesos")).contains("punto_id", "operador_id");
         assertThat(indices("auditoria")).contains("usuario_id");
         assertThat(indices("equipos")).contains("usuario_id");
+        assertThat(indices("asistencia_clases")).contains("instructor_id", "aprendiz_id");
     }
 
     @Test

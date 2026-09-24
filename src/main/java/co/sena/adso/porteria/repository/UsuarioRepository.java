@@ -1,12 +1,14 @@
 package co.sena.adso.porteria.repository;
 
 import co.sena.adso.porteria.entity.Usuario;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -50,6 +52,37 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Query("SELECT DISTINCT u.ficha FROM Usuario u WHERE u.ficha IS NOT NULL AND u.ficha <> '' ORDER BY u.ficha")
     List<String> fichasEnUso();
+
+    // [usuario, primera entrada] de los aprendices de una ficha que cruzaron portería en el rango
+    @Query("""
+            SELECT u, MIN(a.fecha) FROM Usuario u, Acceso a
+            WHERE a.referenciaId = u.id AND a.tipoReferencia = 'Usuario' AND a.tipo = 'Entrada'
+              AND a.fecha >= :desde AND a.fecha < :hasta AND u.ficha = :ficha AND u.cargo = 'Aprendiz'
+            GROUP BY u ORDER BY MIN(a.fecha), u.nombre
+            """)
+    List<Object[]> llegadasDeFicha(@Param("ficha") String ficha, @Param("desde") LocalDateTime desde,
+                                   @Param("hasta") LocalDateTime hasta);
+
+    // [ficha, aprendices, programa] de las fichas con aprendices que entraron en el rango
+    @Query("""
+            SELECT u.ficha, COUNT(DISTINCT u.id), MAX(u.programa) FROM Usuario u, Acceso a
+            WHERE a.referenciaId = u.id AND a.tipoReferencia = 'Usuario' AND a.tipo = 'Entrada'
+              AND a.fecha >= :desde AND a.fecha < :hasta AND u.cargo = 'Aprendiz'
+              AND u.ficha IS NOT NULL AND u.ficha <> ''
+            GROUP BY u.ficha ORDER BY u.ficha
+            """)
+    List<Object[]> fichasConAprendicesAdentro(@Param("desde") LocalDateTime desde, @Param("hasta") LocalDateTime hasta);
+
+    List<Usuario> findByCorreoVerificadoTrueOrderByCargoAscNombreAsc();
+
+    @Query("SELECT u.fichaRef.id, COUNT(u) FROM Usuario u WHERE u.fichaRef IS NOT NULL GROUP BY u.fichaRef.id")
+    List<Object[]> contarPorFicha();
+
+    // La columna de texto sigue a la ficha: reportes y asistencia filtran por ella
+    @Modifying
+    @Query("UPDATE Usuario u SET u.ficha = :numero, u.programa = :programa WHERE u.fichaRef.id = :fichaId")
+    void sincronizarFicha(@Param("fichaId") Long fichaId, @Param("numero") String numero,
+                          @Param("programa") String programa);
 
     // El patrón llega con % y _ ya escapados: buscar "%" no debe traer a todo el centro
     @Query("""
