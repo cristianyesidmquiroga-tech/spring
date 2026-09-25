@@ -45,7 +45,7 @@ public class TutorialService {
                     "Toca el código de barras de tu carnet para agrandarlo y acércalo al lector con la pantalla con "
                             + "buen brillo. También puedes descargar el carnet como imagen con el botón \"Descargar "
                             + "Carnet Institucional\"."),
-            new Paso("¿Algo falla? Tienes ayuda dentro del sistema", "fa-circle-question",
+            new Paso("¿Algo falla? Tienes ayuda dentro del sistema", "fa-question-circle",
                     "En el \"Centro de Ayuda\" del menú están las respuestas a las dudas más comunes (foto rechazada, "
                             + "código de barras que no aparece, ficha mal escrita). Y en \"Mensajes\" puedes hablar "
                             + "directamente con un asesor sin tener que buscar a nadie en portería.",

@@ -126,7 +126,7 @@ public class MensajeService {
         List<ConversacionResponseDTO.Item> items = mensajeRepository.findByUsuarioIdOrderByFechaAscIdAsc(persona.getId())
                 .stream().map(m -> ConversacionResponseDTO.Item.fromEntity(m, quienMira)).toList();
         return new ConversacionResponseDTO(new ConversacionResponseDTO.Persona(persona.getId(), persona.getNombre(),
-                persona.getCargo(), documento, persona.tieneFotoPropia()), items);
+                persona.getCargo(), documento, persona.tieneFotoPropia(), persona.getFotoEstado()), items);
     }
 
     private Usuario buscar(Long id) {
