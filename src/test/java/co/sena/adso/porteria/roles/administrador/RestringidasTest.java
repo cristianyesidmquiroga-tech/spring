@@ -10,15 +10,16 @@ import org.junit.jupiter.params.provider.CsvSource;
 // Portería 2: tests/roles/administrador/test_restringidas.py
 class RestringidasTest extends PruebaRol {
 
-    // PROGRAMADAS: historial_cambios y respaldos (fase 5)
     @ParameterizedTest(name = "{0}")
     @CsvSource({
             "ambientes, /api/ambientes",
             "asistencia, /api/asistencia",
             "comunicados, /api/comunicados",
             "fichas, /api/admin/fichas",
-            "historial_clases, /api/admin/clases",
             "gestion_usuarios, /api/admin/usuarios",
+            "historial_cambios, /api/admin/auditoria",
+            "historial_clases, /api/admin/clases",
+            "respaldos, /api/admin/respaldos",
             "revision_fotos, /api/admin/fotos"
     })
     void noEntra(String vista, String url) throws Exception {

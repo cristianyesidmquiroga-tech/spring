@@ -7,6 +7,8 @@ import co.sena.adso.porteria.config.LimitePeticionesFilter;
 import co.sena.adso.porteria.entity.Usuario;
 import co.sena.adso.porteria.repository.RolRepository;
 import co.sena.adso.porteria.repository.UsuarioRepository;
+import co.sena.adso.porteria.service.CaptchaService;
+import co.sena.adso.porteria.service.CuentaService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.nio.file.Path;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -74,6 +77,12 @@ public abstract class PruebaIntegracion {
     private LimitePeticionesFilter limitador;
 
     @Autowired
+    private CuentaService cuentaService;
+
+    @Autowired
+    private CaptchaService captchaService;
+
+    @Autowired
     private Clock relojApi;
 
     @Value("${app.fotos.carpeta}")
@@ -93,6 +102,9 @@ public abstract class PruebaIntegracion {
                 ('3235642', 'Análisis y Desarrollo de Software', '2027-12-15'),
                 ('2890114', 'Gestión Contable y de Información Financiera', '2026-12-10')""");
         reiniciarLimitador();
+        ((Map<?, ?>) ReflectionTestUtils.getField(cuentaService, "codigosPorCorreo")).clear();
+        ((Map<?, ?>) ReflectionTestUtils.getField(captchaService, "usados")).clear();
+        ReflectionTestUtils.setField(captchaService, "activo", false);
         borrarFotos();
     }
 
@@ -178,5 +190,30 @@ public abstract class PruebaIntegracion {
 
     protected JsonNode leer(MvcResult resultado) throws Exception {
         return json.readTree(resultado.getResponse().getContentAsString(StandardCharsets.UTF_8));
+    }
+
+    // Mismos datos base que el registro de las pruebas de Portería 2
+    protected Map<String, Object> datosRegistro() {
+        Map<String, Object> datos = new HashMap<>();
+        datos.put("nombre", "Persona Nueva");
+        datos.put("correo", "nueva@sena.edu.co");
+        datos.put("documento", "999888");
+        datos.put("password", CLAVE);
+        datos.put("confirmacion", CLAVE);
+        datos.put("aceptaDatos", true);
+        return datos;
+    }
+
+    protected MvcResult registrar(Map<String, Object> datos) throws Exception {
+        return mvc.perform(post("/api/auth/registro").contentType(MediaType.APPLICATION_JSON).content(aJson(datos))).andReturn();
+    }
+
+    protected MvcResult pedirCodigo(String correo) throws Exception {
+        return mvc.perform(post("/api/auth/recuperacion").contentType(MediaType.APPLICATION_JSON)
+                .content(aJson(Map.of("correo", correo)))).andReturn();
+    }
+
+    protected Usuario porCorreo(String correo) {
+        return usuarioRepository.buscarPorCorreoODocumento(correo).orElse(null);
     }
 }

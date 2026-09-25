@@ -126,6 +126,30 @@ responde a quién no se le pudo enviar.
 Aprobar o rechazar una foto deja un mensaje automático en el hilo de la persona. El asesor ve solo los
 últimos cuatro dígitos del documento y nunca el correo.
 
+## Rutas de la fase 5 (cuentas y operación)
+
+| Método | Ruta | Quién |
+|---|---|---|
+| GET | /api/auth/captcha | público (desafío anti-bot o `{"activo": false}`) |
+| POST | /api/auth/registro | público; solo un Admin con sesión elige cargo |
+| POST | /api/auth/verificacion, /api/auth/verificacion/reenviar | quien tiene el correo sin verificar |
+| POST | /api/auth/recuperacion, /recuperacion/verificar, /recuperacion/cambiar | público |
+| GET | /api/politica-privacidad | público |
+| GET | /api/admin/auditoria?pagina= | Admin |
+| GET | /api/admin/respaldos, /api/admin/respaldos/{archivo} | Admin |
+| POST | /api/admin/usuarios/importar (multipart, campo `archivo`) | Admin |
+| GET | /api/admin/correos/fallidos | Admin |
+
+- Una cuenta con el correo sin verificar solo puede usar `/api/auth/**` (la API responde 403 `CORREO_SIN_VERIFICAR`).
+- Los códigos de verificación y recuperación vencen a los 15 minutos y se anulan tras 5 intentos; fallarlos no
+  bloquea el login. La recuperación responde lo mismo exista o no la cuenta.
+- El correo sale en segundo plano: los fallos definitivos (credenciales, destinatario inexistente, 5xx) no se
+  reintentan; los pasajeros se reintentan dos veces. En el log las direcciones van ofuscadas.
+- El respaldo del mes anterior se genera el día 1 a las 00:00:10 en `CARPETA_RESPALDOS`; solo borra datos con
+  `PURGAR_TRAS_RESPALDO=true` y después de comprobar que el archivo se puede releer.
+- La importación nunca crea administradores, degrada cargos inválidos a Aprendiz y da a cada fila una contraseña
+  temporal distinta que llega por correo.
+
 ## Seguridad
 
 - Contraseñas con BCrypt, mínimo 8 caracteres combinando letras y números.

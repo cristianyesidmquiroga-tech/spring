@@ -1,7 +1,11 @@
 package co.sena.adso.porteria.modulos;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -9,6 +13,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import co.sena.adso.porteria.entity.Usuario;
 import co.sena.adso.porteria.service.CarnetService;
 import co.sena.adso.porteria.service.CodigoBarrasService;
+import co.sena.adso.porteria.service.CorreoService;
+import co.sena.adso.porteria.soporte.Excel;
 import co.sena.adso.porteria.soporte.PruebaIntegracion;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
@@ -16,9 +22,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 // Portería 2: tests/modulos/test_cargos_validos.py
 class CargosValidosTest extends PruebaIntegracion {
+
+    // Como el monkeypatch de enviar_correo: cuenta los correos sin enviarlos
+    @MockBean
+    private CorreoService correoService;
 
     private static final Map<String, String> NUEVOS_CARGOS = new LinkedHashMap<>();
 
@@ -77,7 +88,6 @@ class CargosValidosTest extends PruebaIntegracion {
         assertThat(usuarioRepository.findById(persona.getId()).orElseThrow().getCargo()).isEqualTo("Aprendiz");
     }
 
-    // La aserción de correos enviados de Portería 2 queda para la fase 5 (la API aún no envía correos)
     @Test
     void losCargosNuevosSeCreanConSusPermisos() throws Exception {
         Sesion admin = iniciarSesionAdmin();
@@ -93,5 +103,37 @@ class CargosValidosTest extends PruebaIntegracion {
         assertThat(primeroConCargo("Subdirector").puedeVerAmbientes()).isTrue();
         assertThat(primeroConCargo("Contratista").puedeVerAmbientes()).isFalse();
         assertThat(primeroConCargo("Funcionario").puedeVerAmbientes()).isFalse();
+        verify(correoService, times(4)).enviar(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void registroConSesionAdminTambienValidaElCargo() throws Exception {
+        Sesion admin = iniciarSesionAdmin();
+        Map<String, Object> datos = datosRegistro();
+        datos.put("nombre", "Cargo Invalido");
+        datos.put("correo", "registro-invalido@sena.edu.co");
+        datos.put("documento", "123458");
+        datos.put("cargo", "Cargo Inventado");
+        mvc.perform(conJson(admin, post("/api/auth/registro"), datos)).andExpect(status().isBadRequest());
+        assertThat(usuarioRepository.existsByCorreoIgnoreCase("registro-invalido@sena.edu.co")).isFalse();
+    }
+
+    @Test
+    void importacionAceptaLosCargosNuevosYAvisaLosInvalidos() throws Exception {
+        Sesion admin = iniciarSesionAdmin();
+        List<Map<String, Object>> filas = new ArrayList<>();
+        NUEVOS_CARGOS.keySet().forEach(cargo -> filas.add(Map.of("Nombre", cargo,
+                "Correo", cargo.toLowerCase() + "@sena.edu.co", "Cargo", cargo)));
+        filas.add(Map.of("Nombre", "No Valido", "Correo", "no-valido@sena.edu.co", "Cargo", "Cargo Inventado"));
+
+        JsonNode detalles = leer(mvc.perform(con(admin, multipart("/api/admin/usuarios/importar")
+                .file(Excel.deFilas(filas, "cargos.xlsx")))).andExpect(status().isOk()).andReturn()).get("detalles");
+
+        assertThat(detalles.get("creados").asInt()).isEqualTo(5);
+        List<String> avisos = new ArrayList<>();
+        detalles.get("errores").forEach(a -> avisos.add(a.asText().toLowerCase()));
+        assertThat(avisos).anyMatch(a -> a.contains("cargo") && a.contains("no válido"));
+        NUEVOS_CARGOS.keySet().forEach(cargo -> assertThat(usuarioRepository.findByCargoInOrderByNombre(List.of(cargo))).isNotEmpty());
+        assertThat(porCorreo("no-valido@sena.edu.co").getCargo()).isEqualTo("Aprendiz");
     }
 }

@@ -13,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import co.sena.adso.porteria.entity.Usuario;
 import co.sena.adso.porteria.exception.DatoInvalidoException;
 import co.sena.adso.porteria.service.FotoService;
+import co.sena.adso.porteria.service.RespaldoService;
 import co.sena.adso.porteria.soporte.Perfil;
 import co.sena.adso.porteria.soporte.PruebaIntegracion;
 import java.awt.Color;
@@ -24,6 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Stream;
@@ -38,9 +41,14 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.dhatim.fastexcel.reader.ReadableWorkbook;
+import org.dhatim.fastexcel.reader.Row;
+import org.dhatim.fastexcel.reader.Sheet;
 import org.mockito.MockedStatic;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.ResultActions;
 
 // Portería 2: tests/modulos/test_almacenamiento.py
@@ -305,5 +313,57 @@ class AlmacenamientoTest extends PruebaIntegracion {
         try (var flujo = ImageIO.createImageInputStream(ruta.toFile())) {
             return ImageIO.getImageReaders(flujo).next().getFormatName().toUpperCase();
         }
+    }
+
+    @Autowired
+    private RespaldoService respaldoService;
+
+    @Autowired
+    private Clock relojRespaldo;
+
+    private Path archivoDelMesPasado() throws IOException {
+        Path ruta = respaldoService.carpeta().resolve(RespaldoService.nombreArchivo(LocalDate.now(relojRespaldo)));
+        Files.deleteIfExists(ruta);
+        return ruta;
+    }
+
+    private void accesoDelMesPasado(Long referencia, String tipoReferencia) {
+        jdbc.update("INSERT INTO accesos (punto_id, referencia_id, tipo_referencia, tipo, fecha) VALUES (1, ?, ?, 'Entrada', ?)",
+                referencia, tipoReferencia, LocalDate.now(relojRespaldo).withDayOfMonth(1).minusDays(5).atTime(8, 0));
+    }
+
+    // referencia_id es polimórfico: sin filtrar por tipo, el visitante 7 se archivaba con la cédula del usuario 7
+    @Test
+    void noMezclaAccesosDeDistintasEntidades() throws Exception {
+        Usuario usuario = crearUsuario("ana@sena.edu.co", "12345");
+        accesoDelMesPasado(usuario.getId(), "Usuario");
+        accesoDelMesPasado(usuario.getId(), "Visitante");
+        Path ruta = archivoDelMesPasado();
+
+        respaldoService.respaldarMesAnterior();
+
+        assertThat(ruta).as("el respaldo debió generar un archivo").isRegularFile();
+        try (ReadableWorkbook libro = new ReadableWorkbook(ruta.toFile())) {
+            assertThat(libro.getSheets().map(Sheet::getName)).as("visitantes y vehículos también se archivan")
+                    .contains("Accesos No Usuarios");
+            List<Row> filas = libro.findSheet("Historial Accesos").orElseThrow().read();
+            assertThat(filas).as("solo el acceso del usuario va en esa hoja").hasSize(2);
+        }
+    }
+
+    @Test
+    void soloBorraSiSePideAProposito() throws Exception {
+        Usuario usuario = crearUsuario("beto@sena.edu.co", "543210");
+        accesoDelMesPasado(usuario.getId(), "Usuario");
+        Path ruta = archivoDelMesPasado();
+        ReflectionTestUtils.setField(respaldoService, "purgar", true);
+        try {
+            respaldoService.respaldarMesAnterior();
+        } finally {
+            ReflectionTestUtils.setField(respaldoService, "purgar", false);
+        }
+        assertThat(ruta).isRegularFile();
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM accesos WHERE fecha < ?", Long.class,
+                LocalDate.now(relojRespaldo).withDayOfMonth(1).atStartOfDay())).isZero();
     }
 }

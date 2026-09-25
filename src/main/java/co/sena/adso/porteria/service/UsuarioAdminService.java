@@ -46,13 +46,18 @@ public class UsuarioAdminService {
     private final FotoService fotoService;
     private final PasswordEncoder passwordEncoder;
     private final MensajeService mensajeService;
+    private final CorreoService correoService;
+    private final PlantillasCorreo plantillas;
     private final Clock reloj;
 
     public UsuarioAdminService(UsuarioRepository usuarioRepository, RolRepository rolRepository,
                                FichaRepository fichaRepository, AccesoRepository accesoRepository,
                                DocumentoService documentoService,
                                AuthService authService, AuditoriaService auditoriaService, FotoService fotoService,
-                               PasswordEncoder passwordEncoder, MensajeService mensajeService, Clock reloj) {
+                               PasswordEncoder passwordEncoder, MensajeService mensajeService,
+                               CorreoService correoService, PlantillasCorreo plantillas, Clock reloj) {
+        this.correoService = correoService;
+        this.plantillas = plantillas;
         this.mensajeService = mensajeService;
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
@@ -105,6 +110,8 @@ public class UsuarioAdminService {
         auditoriaService.registrar(authService.usuarioActual(), TABLA, usuario.getId(), "Creación de usuario",
                 datos.autorizadoPor(), datos.motivo(),
                 "Alta de " + usuario.getCorreo() + " con rol " + rol.getNombre() + " y cargo " + usuario.getCargo());
+        correoService.enviar(correo, "Bienvenido al Sistema de Acceso - SENA",
+                plantillas.bienvenida(usuario.getNombre(), correo, datos.contrasena()));
         return UsuarioAdminResponseDTO.fromEntity(usuario, LocalDateTime.now(reloj));
     }
 
@@ -218,6 +225,13 @@ public class UsuarioAdminService {
                 ? "Tu foto de perfil fue aprobada. Tu carnet digital ya está activo."
                 : "Tu foto de perfil no fue aprobada. Motivo: " + motivo + "\n\nSube una foto nueva que cumpla los "
                         + "requisitos. Si tienes algún problema para hacerlo, respóndeme por aquí.", true);
+        if (revision.aprobada()) {
+            correoService.enviar(usuario.getCorreo(), "Tu foto fue aprobada - Sistema de Acceso SENA",
+                    plantillas.fotoAprobada(usuario.getNombre()));
+        } else {
+            correoService.enviar(usuario.getCorreo(), "Debes corregir tu foto de perfil - Sistema de Acceso SENA",
+                    plantillas.fotoRechazada(usuario.getNombre(), motivo));
+        }
         usuarioRepository.flush();
         return new RevisionFotoResponseDTO(revision.aprobada() ? "Foto aprobada" : "Foto rechazada",
                 usuarioRepository.countByFotoEstado(Usuario.FOTO_PENDIENTE));

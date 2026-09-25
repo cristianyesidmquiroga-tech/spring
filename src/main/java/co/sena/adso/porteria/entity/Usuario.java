@@ -109,6 +109,25 @@ public class Usuario {
     @Column(name = "tutorial_visto", nullable = false)
     private boolean tutorialVisto;
 
+    @Column(name = "codigo_verificacion", length = 6)
+    private String codigoVerificacion;
+
+    @Column(name = "codigo_expiracion")
+    private LocalDateTime codigoExpiracion;
+
+    @Column(name = "codigo_recuperacion", length = 6)
+    private String codigoRecuperacion;
+
+    @Column(name = "recuperacion_expiracion")
+    private LocalDateTime recuperacionExpiracion;
+
+    // Separado de intentos_fallidos: fallar códigos no debe bloquear ni desbloquear el login
+    @Column(name = "intentos_codigo", nullable = false)
+    private int intentosCodigo;
+
+    @Column(name = "recuperacion_permiso", length = 64)
+    private String recuperacionPermiso;
+
     protected Usuario() {
     }
 
@@ -275,4 +294,61 @@ public class Usuario {
     public LocalDateTime getFotoFechaSubida() { return fotoFechaSubida; }
     public boolean isTutorialVisto() { return tutorialVisto; }
     public void marcarTutorialVisto() { this.tutorialVisto = true; }
+    public String getCodigoVerificacion() { return codigoVerificacion; }
+    public LocalDateTime getCodigoExpiracion() { return codigoExpiracion; }
+    public String getCodigoRecuperacion() { return codigoRecuperacion; }
+    public LocalDateTime getRecuperacionExpiracion() { return recuperacionExpiracion; }
+    public int getIntentosCodigo() { return intentosCodigo; }
+    public String getRecuperacionPermiso() { return recuperacionPermiso; }
+
+    public void nuevoCodigoVerificacion(String codigo, LocalDateTime vence) {
+        codigoVerificacion = codigo;
+        codigoExpiracion = vence;
+        intentosCodigo = 0;
+    }
+
+    public void verificarCorreo() {
+        correoVerificado = true;
+        codigoVerificacion = null;
+        codigoExpiracion = null;
+        intentosCodigo = 0;
+    }
+
+    public int sumarIntentoCodigo() {
+        return ++intentosCodigo;
+    }
+
+    public void anularCodigoVerificacion() {
+        codigoVerificacion = null;
+    }
+
+    public void nuevoCodigoRecuperacion(String codigo, LocalDateTime vence) {
+        codigoRecuperacion = codigo;
+        recuperacionExpiracion = vence;
+        recuperacionPermiso = null;
+        intentosCodigo = 0;
+    }
+
+    public void anularRecuperacion() {
+        codigoRecuperacion = null;
+        recuperacionExpiracion = null;
+        recuperacionPermiso = null;
+    }
+
+    // El código ya no sirve; solo queda el permiso para el paso de cambio
+    public void concederPermisoRecuperacion(String permiso) {
+        codigoRecuperacion = null;
+        recuperacionPermiso = permiso;
+        intentosCodigo = 0;
+    }
+
+    // Cierra toda sesión abierta con la contraseña anterior
+    public void restablecerContrasena(String hash) {
+        contrasena = hash;
+        anularRecuperacion();
+        intentosCodigo = 0;
+        debeCambiarContrasena = false;
+        sessionToken = null;
+        limpiarBloqueo();
+    }
 }

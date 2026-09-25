@@ -140,4 +140,32 @@ class DocumentosTest extends PruebaIntegracion {
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(jsonPath("$.mensaje", Matchers.containsString("ya está registrado")));
     }
+
+    private Map<String, Object> registroCon(String documento, String tipo) {
+        Map<String, Object> datos = datosRegistro();
+        datos.put("documento", documento);
+        datos.put("tipoDocumento", tipo);
+        return datos;
+    }
+
+    @Test
+    void registroConDocumentoValido() throws Exception {
+        assertThat(registrar(registroCon("1098765432", "CC")).getResponse().getStatus()).isEqualTo(201);
+        Usuario creada = porCorreo("nueva@sena.edu.co");
+        assertThat(creada.getDocumento()).isEqualTo("1098765432");
+        assertThat(creada.getTipoDocumento()).isEqualTo("CC");
+    }
+
+    @Test
+    void registroConDocumentoInvalido() throws Exception {
+        assertThat(registrar(registroCon("99", "CC")).getResponse().getStatus()).isEqualTo(400);
+        assertThat(porCorreo("nueva@sena.edu.co")).isNull();
+    }
+
+    // Muchos aprendices son menores de edad y entran con TI, no con cédula
+    @Test
+    void unaTarjetaDeIdentidadDeMenor() throws Exception {
+        assertThat(registrar(registroCon("1012345678", "TI")).getResponse().getStatus()).isEqualTo(201);
+        assertThat(porCorreo("nueva@sena.edu.co").getTipoDocumento()).isEqualTo("TI");
+    }
 }

@@ -47,9 +47,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .orElse(null);
 
         if (usuario != null) {
-            // Con contraseña temporal solo se permite cambiarla o cerrar sesión
-            if (usuario.isDebeCambiarContrasena() && !request.getRequestURI().startsWith("/api/auth/")) {
-                responderCambioPendiente(response);
+            // Con contraseña temporal o correo sin verificar solo quedan las rutas de /api/auth
+            boolean deAutenticacion = request.getRequestURI().startsWith("/api/auth/");
+            if (usuario.isDebeCambiarContrasena() && !deAutenticacion) {
+                responderBloqueo(response, "CAMBIO_CONTRASENA", "Debes cambiar tu contraseña temporal antes de continuar");
+                return;
+            }
+            if (!usuario.isCorreoVerificado() && !deAutenticacion) {
+                responderBloqueo(response, "CORREO_SIN_VERIFICAR", "Debes verificar tu correo antes de continuar");
                 return;
             }
             var auth = new UsernamePasswordAuthenticationToken(usuario.getId(), null, permisos(usuario));
@@ -78,11 +83,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return lista;
     }
 
-    private static void responderCambioPendiente(HttpServletResponse response) throws IOException {
+    private static void responderBloqueo(HttpServletResponse response, String codigo, String mensaje) throws IOException {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        response.getWriter().write("{\"status\":403,\"codigo\":\"CAMBIO_CONTRASENA\","
-                + "\"mensaje\":\"Debes cambiar tu contraseña temporal antes de continuar\"}");
+        response.getWriter().write("{\"status\":403,\"codigo\":\"" + codigo + "\",\"mensaje\":\"" + mensaje + "\"}");
     }
 }

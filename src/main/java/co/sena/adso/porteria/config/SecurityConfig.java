@@ -53,6 +53,9 @@ public class SecurityConfig {
         if (seguridadActiva) {
             http.authorizeHttpRequests(auth -> auth
                     .requestMatchers("/api/auth/login", "/api/hello", "/actuator/health").permitAll()
+                    .requestMatchers(HttpMethod.POST, "/api/auth/registro", "/api/auth/recuperacion",
+                            "/api/auth/recuperacion/verificar", "/api/auth/recuperacion/cambiar").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/auth/captcha", "/api/politica-privacidad").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/avatares/*").permitAll()
                     .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                     .requestMatchers("/error").permitAll()

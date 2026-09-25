@@ -27,10 +27,12 @@ public class MensajeService {
     private final MensajeRepository mensajeRepository;
     private final UsuarioRepository usuarioRepository;
     private final AuthService authService;
+    private final RespaldoService respaldoService;
     private final Clock reloj;
 
     public MensajeService(MensajeRepository mensajeRepository, UsuarioRepository usuarioRepository,
-                          AuthService authService, Clock reloj) {
+                          AuthService authService, RespaldoService respaldoService, Clock reloj) {
+        this.respaldoService = respaldoService;
         this.mensajeRepository = mensajeRepository;
         this.usuarioRepository = usuarioRepository;
         this.authService = authService;
@@ -100,7 +102,8 @@ public class MensajeService {
         Usuario yo = authService.usuarioActual();
         long pendientes = yo.puedeAsesorar() ? mensajeRepository.hilosConRespuestaPendiente() : 0;
         long fotos = yo.esAdmin() ? usuarioRepository.countByFotoEstado(Usuario.FOTO_PENDIENTE) : 0;
-        return new AvisosResponseDTO(mensajeRepository.sinLeerParaLaPersona(yo.getId()), pendientes, fotos);
+        return new AvisosResponseDTO(mensajeRepository.sinLeerParaLaPersona(yo.getId()), pendientes, fotos,
+                yo.esAdmin() ? respaldoService.aviso() : null);
     }
 
     static String limpio(String texto) {

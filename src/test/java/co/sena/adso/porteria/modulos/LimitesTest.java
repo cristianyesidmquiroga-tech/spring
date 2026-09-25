@@ -7,9 +7,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import co.sena.adso.porteria.config.LimitePeticionesFilter;
 import co.sena.adso.porteria.entity.Usuario;
+import co.sena.adso.porteria.service.CaptchaService;
 import co.sena.adso.porteria.soporte.Perfil;
 import co.sena.adso.porteria.soporte.PruebaIntegracion;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -154,5 +158,103 @@ class LimitesTest extends PruebaIntegracion {
                     Map.of("asunto", "Otro", "detalle", "Hola, necesito ayuda."))).andReturn().getResponse().getStatus());
         }
         assertThat(codigos).contains(429);
+    }
+
+    @Autowired
+    private CaptchaService captchaService;
+
+    // Resuelve la prueba de trabajo como lo haría el navegador
+    private String resolver(JsonNode desafio) throws Exception {
+        String salt = desafio.get("salt").asText();
+        for (int numero = 0; numero <= desafio.get("maxNumber").asInt(); numero++) {
+            if (CaptchaService.sha256(salt + numero).equals(desafio.get("challenge").asText())) {
+                return Base64.getEncoder().encodeToString(aJson(Map.of("algorithm", "SHA-256",
+                        "challenge", desafio.get("challenge").asText(), "number", numero, "salt", salt,
+                        "signature", desafio.get("signature").asText())).getBytes(StandardCharsets.UTF_8));
+            }
+        }
+        throw new AssertionError("El desafío no tiene solución");
+    }
+
+    private JsonNode desafio() throws Exception {
+        return leer(mvc.perform(get("/api/auth/captcha")).andReturn());
+    }
+
+    // Espacio de búsqueda pequeño: la prueba resuelve la prueba de trabajo de verdad
+    private void encenderDesafio() {
+        ReflectionTestUtils.setField(captchaService, "activo", true);
+        ReflectionTestUtils.setField(captchaService, "dificultad", 500);
+    }
+
+    // Si la verificación estorba se apaga desde el .env y nadie se queda sin crear cuenta
+    @Test
+    void apagadoElRegistroSigueFuncionando() throws Exception {
+        assertThat(captchaService.activo()).isFalse();
+        assertThat(registrar(datosRegistro()).getResponse().getStatus()).isEqualTo(201);
+        assertThat(porCorreo("nueva@sena.edu.co")).isNotNull();
+    }
+
+    @Test
+    void apagadoLaRecuperacionSigueFuncionando() throws Exception {
+        crearUsuario("ana@sena.edu.co", "123456");
+        assertThat(pedirCodigo("ana@sena.edu.co").getResponse().getStatus()).isEqualTo(200);
+    }
+
+    // React solo pinta el widget si la API dice que está activo
+    @Test
+    void apagadoElWidgetNoSePinta() throws Exception {
+        assertThat(desafio().get("activo").asBoolean()).isFalse();
+        assertThat(desafio().has("challenge")).isFalse();
+    }
+
+    @Test
+    void encendidoSinSolucionNoRegistra() throws Exception {
+        encenderDesafio();
+        assertThat(registrar(datosRegistro()).getResponse().getStatus()).isEqualTo(400);
+        assertThat(porCorreo("nueva@sena.edu.co")).isNull();
+    }
+
+    @Test
+    void encendidoConSolucionSiRegistra() throws Exception {
+        encenderDesafio();
+        Map<String, Object> datos = datosRegistro();
+        datos.put("captcha", resolver(desafio()));
+        assertThat(registrar(datos).getResponse().getStatus()).isEqualTo(201);
+    }
+
+    // Sin esto un bot resuelve un desafío y reenvía el formulario mil veces
+    @Test
+    void unaSolucionNoSirveDosVeces() throws Exception {
+        encenderDesafio();
+        String solucion = resolver(desafio());
+        Map<String, Object> primero = datosRegistro();
+        primero.put("captcha", solucion);
+        assertThat(registrar(primero).getResponse().getStatus()).isEqualTo(201);
+
+        Map<String, Object> segundo = datosRegistro();
+        segundo.put("correo", "otra@sena.edu.co");
+        segundo.put("documento", "999777");
+        segundo.put("captcha", solucion);
+        assertThat(registrar(segundo).getResponse().getStatus()).isEqualTo(400);
+        assertThat(porCorreo("otra@sena.edu.co")).isNull();
+    }
+
+    // La firma HMAC es lo que impide fabricarse un desafío propio
+    @Test
+    void unaSolucionInventadaNoPasa() throws Exception {
+        encenderDesafio();
+        Map<String, Object> datos = datosRegistro();
+        datos.put("captcha", Base64.getEncoder().encodeToString(aJson(Map.of("algorithm", "SHA-256",
+                "challenge", "a".repeat(64), "number", 1, "salt", "abc?expires=99999999999&",
+                "signature", "b".repeat(64))).getBytes(StandardCharsets.UTF_8)));
+        assertThat(registrar(datos).getResponse().getStatus()).isEqualTo(400);
+    }
+
+    @Test
+    void encendidoElWidgetSePinta() throws Exception {
+        encenderDesafio();
+        JsonNode desafio = desafio();
+        assertThat(desafio.get("activo").asBoolean()).isTrue();
+        assertThat(desafio.get("challenge").asText()).hasSize(64);
     }
 }

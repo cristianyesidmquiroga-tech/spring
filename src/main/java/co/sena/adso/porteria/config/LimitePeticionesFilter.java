@@ -30,9 +30,10 @@ public class LimitePeticionesFilter extends OncePerRequestFilter {
     private record Ventana(int maximo, long duracionMs) {
     }
 
+    // La ruta admite variables como {archivo}, que valen por un solo tramo de la URL
     private record Regla(String metodo, String ruta, List<Ventana> ventanas) {
         boolean aplica(HttpServletRequest req) {
-            return metodo.equals(req.getMethod()) && ruta.equals(req.getRequestURI());
+            return metodo.equals(req.getMethod()) && req.getRequestURI().matches(ruta.replaceAll("\\{[^/]+}", "[^/]+"));
         }
     }
 
@@ -46,7 +47,17 @@ public class LimitePeticionesFilter extends OncePerRequestFilter {
             new Regla("POST", "/api/equipos", List.of(new Ventana(20, HORA))),
             // Una auditoría envió 50 mensajes seguidos por el centro de ayuda sin ninguna traba
             new Regla("POST", "/api/mensajes", List.of(new Ventana(5, MINUTO), new Ventana(40, HORA))),
-            new Regla("POST", "/api/ayuda/contacto", List.of(new Ventana(5, HORA), new Ventana(15, 24 * HORA))));
+            new Regla("POST", "/api/ayuda/contacto", List.of(new Ventana(5, HORA), new Ventana(15, 24 * HORA))),
+            // Registro y recuperación crean cuentas o disparan correos desde rutas públicas
+            new Regla("POST", "/api/auth/registro", List.of(new Ventana(5, HORA), new Ventana(20, 24 * HORA))),
+            new Regla("POST", "/api/auth/recuperacion", List.of(new Ventana(5, HORA), new Ventana(15, 24 * HORA))),
+            new Regla("POST", "/api/auth/recuperacion/verificar", List.of(new Ventana(15, HORA))),
+            new Regla("POST", "/api/auth/recuperacion/cambiar", List.of(new Ventana(10, HORA))),
+            new Regla("POST", "/api/auth/verificacion", List.of(new Ventana(20, HORA))),
+            new Regla("POST", "/api/auth/verificacion/reenviar", List.of(new Ventana(3, HORA), new Ventana(10, 24 * HORA))),
+            new Regla("GET", "/api/auth/captcha", List.of(new Ventana(60, MINUTO))),
+            new Regla("POST", "/api/admin/usuarios/importar", List.of(new Ventana(5, HORA))),
+            new Regla("GET", "/api/admin/respaldos/{archivo}", List.of(new Ventana(20, HORA))));
 
     private final Map<String, Deque<Long>> registros = new ConcurrentHashMap<>();
 

@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import co.sena.adso.porteria.entity.Usuario;
 import co.sena.adso.porteria.exception.DatoInvalidoException;
 import co.sena.adso.porteria.service.AuthService;
+import co.sena.adso.porteria.service.CuentaService;
 import co.sena.adso.porteria.service.JwtService;
 import co.sena.adso.porteria.soporte.Perfil;
 import co.sena.adso.porteria.soporte.PruebaIntegracion;
@@ -164,5 +165,24 @@ class SeguridadTest extends PruebaIntegracion {
     void horaColombiaEsNaive() {
         assertThat(reloj.getZone()).isEqualTo(ZoneId.of("America/Bogota"));
         assertThat(LocalDateTime.now(reloj)).isInstanceOf(LocalDateTime.class);
+    }
+
+    @Test
+    void listaVaciaPermiteTodo() {
+        assertThat(CuentaService.correoPermitido("cualquiera@gmail.com", List.of())).isTrue();
+    }
+
+    @Test
+    void filtraPorDominio() {
+        List<String> permitidos = List.of("sena.edu.co", "soy.sena.edu.co");
+        assertThat(CuentaService.correoPermitido("juan@sena.edu.co", permitidos)).isTrue();
+        assertThat(CuentaService.correoPermitido("ana@soy.sena.edu.co", permitidos)).isTrue();
+        assertThat(CuentaService.correoPermitido("otro@gmail.com", permitidos)).isFalse();
+    }
+
+    // "sena.edu.co.atacante.com" no debe pasar como dominio del SENA
+    @Test
+    void noSeEnganyaConSubcadenas() {
+        assertThat(CuentaService.correoPermitido("x@sena.edu.co.atacante.com", List.of("sena.edu.co"))).isFalse();
     }
 }

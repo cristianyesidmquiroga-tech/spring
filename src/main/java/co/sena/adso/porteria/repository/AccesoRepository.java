@@ -112,6 +112,9 @@ public interface AccesoRepository extends JpaRepository<Acceso, Long> {
             """)
     List<Object[]> primerAccesoPorUsuario(@Param("ids") Collection<Long> ids);
 
+    List<Acceso> findByTipoReferenciaNotAndFechaGreaterThanEqualAndFechaLessThanOrderByFechaAsc(
+            String tipoReferencia, LocalDateTime desde, LocalDateTime hasta);
+
     @Modifying
     @Query("DELETE FROM Acceso a WHERE a.tipoReferencia = 'Usuario' AND a.referenciaId = :usuarioId")
     void borrarDeUsuario(@Param("usuarioId") Long usuarioId);

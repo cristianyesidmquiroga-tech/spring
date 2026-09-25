@@ -30,6 +30,12 @@ public interface AsistenciaClaseRepository extends JpaRepository<AsistenciaClase
     void borrarDeFichaEnRango(@Param("ficha") String ficha, @Param("desde") LocalDateTime desde,
                               @Param("hasta") LocalDateTime hasta);
 
+    @Query("""
+            SELECT a FROM AsistenciaClase a JOIN FETCH a.aprendiz LEFT JOIN FETCH a.instructor
+            WHERE a.fecha >= :desde AND a.fecha < :hasta ORDER BY a.fecha
+            """)
+    List<AsistenciaClase> enRango(@Param("desde") LocalDateTime desde, @Param("hasta") LocalDateTime hasta);
+
     // [aprendiz_id, faltas] desde una fecha
     @Query("""
             SELECT a.aprendiz.id, COUNT(a) FROM AsistenciaClase a

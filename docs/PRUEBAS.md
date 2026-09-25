@@ -34,12 +34,11 @@ En `tests/vistas` los nombres compuestos pasan a una sola palabra:
 | historial_clases | clases |
 | politica_privacidad | privacidad |
 
-Las demás (carnet, equipos, escaner, login, panel, pases, perfil, reportes, y las que aún no existen como ambientes o fichas) conservan su nombre.
+Las demás (ambientes, asistencia, ayuda, carnet, comunicados, equipos, escaner, fichas, login, mensajes, panel, pases, perfil, recuperacion, registro, reportes, respaldos, tutorial y verificacion) conservan su nombre.
 
 ## Estados
 
 - **Migrada**: existe el método Java y pasa.
-- **Programada fase N**: la función todavía no existe en Spring. Fase 5, cuentas y operación: registro, verificación de correo, recuperación, historial de cambios, respaldos, importación de Excel, captcha y política de privacidad.
 - **Descartada**: no se migra por una decisión explícita; debajo de la tabla del archivo van el motivo y la fecha.
 
 Cada clase Java empieza con el comentario `// Portería 2: tests/<ruta>.py`, que es el archivo que se lista en cada sección.
@@ -87,8 +86,8 @@ Java: `modulos.AlmacenamientoTest`
 | `test_la_foto_se_guarda_comprimida_y_con_nombre_fijo` | `AlmacenamientoTest#laFotoSeGuardaComprimidaYConNombreFijo` | Migrada |
 | `test_la_subida_funciona_con_las_fotos_en_otro_volumen` | `AlmacenamientoTest#laSubidaFuncionaConLasFotosEnOtroVolumen` | Migrada |
 | `test_un_archivo_invalido_no_borra_la_foto_anterior` | `AlmacenamientoTest#unArchivoInvalidoNoBorraLaFotoAnterior` | Migrada |
-| `test_no_mezcla_accesos_de_distintas_entidades` | — | Programada fase 5 |
-| `test_solo_borra_si_se_pide_a_proposito` | — | Programada fase 5 |
+| `test_no_mezcla_accesos_de_distintas_entidades` | `AlmacenamientoTest#noMezclaAccesosDeDistintasEntidades` | Migrada |
+| `test_solo_borra_si_se_pide_a_proposito` | `AlmacenamientoTest#soloBorraSiSePideAProposito` | Migrada |
 | `test_rechaza_el_rostro_tapado` (casos: mascarilla azul, mascarilla negra, mascarilla color piel, bufanda, gorra calada) | — | Descartada |
 | `test_las_gafas_siguen_aceptandose` | — | Descartada |
 
@@ -105,16 +104,16 @@ Java: `modulos.AutenticacionTest`
 | `test_bloquea_tras_cinco_intentos` | `AutenticacionTest#bloqueaTrasCincoIntentos` | Migrada |
 | `test_el_contador_se_reinicia_al_acertar` | `AutenticacionTest#elContadorSeReiniciaAlAcertar` | Migrada |
 | `test_login_sin_contrasena_no_entra` | `AutenticacionTest#loginSinContrasenaNoEntra` | Migrada |
-| `test_respuesta_identica_exista_o_no_la_cuenta` | — | Programada fase 5 |
-| `test_codigo_incorrecto_se_anula_tras_cinco_intentos` | — | Programada fase 5 |
-| `test_pedir_codigo_no_reinicia_el_bloqueo_del_login` | — | Programada fase 5 |
-| `test_no_se_puede_saltar_al_paso_de_cambio` | — | Programada fase 5 |
-| `test_codigo_expirado_se_rechaza` | — | Programada fase 5 |
-| `test_registro_valido_crea_la_cuenta` | — | Programada fase 5 |
-| `test_sin_autorizacion_de_datos_no_se_registra` | — | Programada fase 5 |
-| `test_contrasena_vacia_rechazada` | — | Programada fase 5 |
-| `test_contrasena_corta_rechazada` | — | Programada fase 5 |
-| `test_restriccion_de_dominio` | — | Programada fase 5 |
+| `test_respuesta_identica_exista_o_no_la_cuenta` | `AutenticacionTest#respuestaIdenticaExistaONoLaCuenta` | Migrada |
+| `test_codigo_incorrecto_se_anula_tras_cinco_intentos` | `AutenticacionTest#codigoIncorrectoSeAnulaTrasCincoIntentos` | Migrada |
+| `test_pedir_codigo_no_reinicia_el_bloqueo_del_login` | `AutenticacionTest#pedirCodigoNoReiniciaElBloqueoDelLogin` | Migrada |
+| `test_no_se_puede_saltar_al_paso_de_cambio` | `AutenticacionTest#noSePuedeSaltarAlPasoDeCambio` | Migrada |
+| `test_codigo_expirado_se_rechaza` | `AutenticacionTest#codigoExpiradoSeRechaza` | Migrada |
+| `test_registro_valido_crea_la_cuenta` | `AutenticacionTest#registroValidoCreaLaCuenta` | Migrada |
+| `test_sin_autorizacion_de_datos_no_se_registra` | `AutenticacionTest#sinAutorizacionDeDatosNoSeRegistra` | Migrada |
+| `test_contrasena_vacia_rechazada` | `AutenticacionTest#contrasenaVaciaRechazada` | Migrada |
+| `test_contrasena_corta_rechazada` | `AutenticacionTest#contrasenaCortaRechazada` | Migrada |
+| `test_restriccion_de_dominio` | `AutenticacionTest#restriccionDeDominio` | Migrada |
 
 ### tests/modulos/test_avatares.py
 
@@ -143,9 +142,9 @@ Java: `modulos.CargosValidosTest`
 | `test_los_cuatro_cargos_estan_en_la_lista_blanca_y_en_el_carnet` | `CargosValidosTest#losCuatroCargosEstanEnLaListaBlancaYEnElCarnet` | Migrada |
 | `test_el_panel_expone_la_lista_blanca` | `CargosValidosTest#elPanelExponeLaListaBlanca` | Migrada |
 | `test_crear_y_editar_rechazan_cargos_fuera_de_la_lista` | `CargosValidosTest#crearYEditarRechazanCargosFueraDeLaLista` | Migrada |
-| `test_registro_con_sesion_admin_tambien_valida_el_cargo` | — | Programada fase 5 |
+| `test_registro_con_sesion_admin_tambien_valida_el_cargo` | `CargosValidosTest#registroConSesionAdminTambienValidaElCargo` | Migrada |
 | `test_los_cargos_nuevos_se_crean_con_sus_permisos` | `CargosValidosTest#losCargosNuevosSeCreanConSusPermisos` | Migrada |
-| `test_importacion_acepta_los_cargos_nuevos_y_avisa_los_invalidos` | — | Programada fase 5 |
+| `test_importacion_acepta_los_cargos_nuevos_y_avisa_los_invalidos` | `CargosValidosTest#importacionAceptaLosCargosNuevosYAvisaLosInvalidos` | Migrada |
 
 ### tests/modulos/test_carnet.py
 
@@ -206,47 +205,47 @@ Java: `modulos.DocumentosTest`
 | `test_guardar_un_documento_valido` | `DocumentosTest#guardarUnDocumentoValido` | Migrada |
 | `test_un_documento_invalido_se_rechaza` | `DocumentosTest#unDocumentoInvalidoSeRechaza` | Migrada |
 | `test_no_se_puede_usar_el_documento_de_otro` | `DocumentosTest#noSePuedeUsarElDocumentoDeOtro` | Migrada |
-| `test_registro_con_documento_valido` | — | Programada fase 5 |
-| `test_registro_con_documento_invalido` | — | Programada fase 5 |
-| `test_una_tarjeta_de_identidad_de_menor` | — | Programada fase 5 |
+| `test_registro_con_documento_valido` | `DocumentosTest#registroConDocumentoValido` | Migrada |
+| `test_registro_con_documento_invalido` | `DocumentosTest#registroConDocumentoInvalido` | Migrada |
+| `test_una_tarjeta_de_identidad_de_menor` | `DocumentosTest#unaTarjetaDeIdentidadDeMenor` | Migrada |
 
 ### tests/modulos/test_email.py
 
-Java: sin clase todavía
+Java: `modulos.EmailTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_envio_correcto_devuelve_entregado` | — | Programada fase 5 |
-| `test_credenciales_rechazadas_es_fallo_definitivo` | — | Programada fase 5 |
-| `test_destinatario_inexistente_es_fallo_definitivo` | — | Programada fase 5 |
-| `test_remitente_rechazado_es_fallo_definitivo` | — | Programada fase 5 |
-| `test_rechazo_5xx_es_fallo_definitivo` | — | Programada fase 5 |
-| `test_rechazo_4xx_es_fallo_pasajero` | — | Programada fase 5 |
-| `test_corte_de_red_es_fallo_pasajero` | — | Programada fase 5 |
-| `test_servidor_que_cuelga_es_fallo_pasajero` | — | Programada fase 5 |
-| `test_fallo_definitivo_no_se_reintenta` | — | Programada fase 5 |
-| `test_fallo_pasajero_si_se_reintenta` | — | Programada fase 5 |
-| `test_no_se_reintenta_indefinidamente` | — | Programada fase 5 |
-| `test_la_espera_del_reintento_no_bloquea_al_resto` | — | Programada fase 5 |
-| `test_el_temporizador_del_reintento_es_demonio` | — | Programada fase 5 |
-| `test_correos_pendientes_nunca_es_negativo_por_la_ruta_del_reintento` | — | Programada fase 5 |
-| `test_correos_pendientes_cuenta_el_correo_en_vuelo` | — | Programada fase 5 |
-| `test_cada_puerto_elige_su_cifrado` (casos: 465, 587, 25, 2525) | — | Programada fase 5 |
-| `test_un_valor_valido_de_mail_cifrado_se_respeta` (casos: ssl, STARTTLS, ninguno) | — | Programada fase 5 |
-| `test_mail_cifrado_invalido_no_desactiva_el_cifrado` (casos: 6 valores x 3 puertos) | — | Programada fase 5 |
-| `test_puerto_465_abre_el_canal_ya_cifrado` | — | Programada fase 5 |
-| `test_puerto_587_cifra_antes_de_autenticar` | — | Programada fase 5 |
-| `test_un_mail_cifrado_invalido_no_manda_la_clave_en_claro` | — | Programada fase 5 |
-| `test_las_credenciales_rechazadas_no_escriben_el_remitente_entero` | — | Programada fase 5 |
-| `test_ninguna_direccion_completa_aparece_en_el_registro` (casos: envío correcto, credenciales rechazadas) | — | Programada fase 5 |
-| `test_el_destinatario_rechazado_tampoco_se_escribe_entero` | — | Programada fase 5 |
-| `test_ofuscar_no_revela_el_usuario_completo` | — | Programada fase 5 |
-| `test_el_hilo_enviador_sobrevive_a_un_elemento_corrupto` | — | Programada fase 5 |
-| `test_enviar_correo_encola_y_vuelve_pronto` | — | Programada fase 5 |
-| `test_enviar_correo_rechaza_un_destinatario_invalido` | — | Programada fase 5 |
-| `test_el_modo_directo_se_conserva` | — | Programada fase 5 |
-| `test_el_modo_directo_cae_al_rele_si_falla` | — | Programada fase 5 |
-| `test_el_modo_directo_sin_respaldo_es_pasajero` | — | Programada fase 5 |
+| `test_envio_correcto_devuelve_entregado` | `EmailTest#envioCorrectoDevuelveEntregado` | Migrada |
+| `test_credenciales_rechazadas_es_fallo_definitivo` | `EmailTest#credencialesRechazadasEsFalloDefinitivo` | Migrada |
+| `test_destinatario_inexistente_es_fallo_definitivo` | `EmailTest#destinatarioInexistenteEsFalloDefinitivo` | Migrada |
+| `test_remitente_rechazado_es_fallo_definitivo` | `EmailTest#remitenteRechazadoEsFalloDefinitivo` | Migrada |
+| `test_rechazo_5xx_es_fallo_definitivo` | `EmailTest#rechazo5xxEsFalloDefinitivo` | Migrada |
+| `test_rechazo_4xx_es_fallo_pasajero` | `EmailTest#rechazo4xxEsFalloPasajero` | Migrada |
+| `test_corte_de_red_es_fallo_pasajero` | `EmailTest#corteDeRedEsFalloPasajero` | Migrada |
+| `test_servidor_que_cuelga_es_fallo_pasajero` | `EmailTest#servidorQueCuelgaEsFalloPasajero` | Migrada |
+| `test_fallo_definitivo_no_se_reintenta` | `EmailTest#falloDefinitivoNoSeReintenta` | Migrada |
+| `test_fallo_pasajero_si_se_reintenta` | `EmailTest#falloPasajeroSiSeReintenta` | Migrada |
+| `test_no_se_reintenta_indefinidamente` | `EmailTest#noSeReintentaIndefinidamente` | Migrada |
+| `test_la_espera_del_reintento_no_bloquea_al_resto` | `EmailTest#laEsperaDelReintentoNoBloqueaAlResto` | Migrada |
+| `test_el_temporizador_del_reintento_es_demonio` | `EmailTest#elTemporizadorDelReintentoEsDemonio` | Migrada |
+| `test_correos_pendientes_nunca_es_negativo_por_la_ruta_del_reintento` | `EmailTest#correosPendientesNuncaEsNegativoPorLaRutaDelReintento` | Migrada |
+| `test_correos_pendientes_cuenta_el_correo_en_vuelo` | `EmailTest#correosPendientesCuentaElCorreoEnVuelo` | Migrada |
+| `test_cada_puerto_elige_su_cifrado` (casos: 465, 587, 25, 2525) | `EmailTest#cadaPuertoEligeSuCifrado` | Migrada |
+| `test_un_valor_valido_de_mail_cifrado_se_respeta` (casos: ssl, STARTTLS, ninguno) | `EmailTest#unValorValidoDeMailCifradoSeRespeta` | Migrada |
+| `test_mail_cifrado_invalido_no_desactiva_el_cifrado` (casos: 6 valores x 3 puertos) | `EmailTest#mailCifradoInvalidoNoDesactivaElCifrado` | Migrada |
+| `test_puerto_465_abre_el_canal_ya_cifrado` | `EmailTest#puerto465AbreElCanalYaCifrado` | Migrada |
+| `test_puerto_587_cifra_antes_de_autenticar` | `EmailTest#puerto587CifraAntesDeAutenticar` | Migrada |
+| `test_un_mail_cifrado_invalido_no_manda_la_clave_en_claro` | `EmailTest#unMailCifradoInvalidoNoMandaLaClaveEnClaro` | Migrada |
+| `test_las_credenciales_rechazadas_no_escriben_el_remitente_entero` | `EmailTest#lasCredencialesRechazadasNoEscribenElRemitenteEntero` | Migrada |
+| `test_ninguna_direccion_completa_aparece_en_el_registro` (casos: envío correcto, credenciales rechazadas) | `EmailTest#ningunaDireccionCompletaApareceEnElRegistro` | Migrada |
+| `test_el_destinatario_rechazado_tampoco_se_escribe_entero` | `EmailTest#elDestinatarioRechazadoTampocoSeEscribeEntero` | Migrada |
+| `test_ofuscar_no_revela_el_usuario_completo` | `EmailTest#ofuscarNoRevelaElUsuarioCompleto` | Migrada |
+| `test_el_hilo_enviador_sobrevive_a_un_elemento_corrupto` | `EmailTest#elHiloEnviadorSobreviveAUnElementoCorrupto` | Migrada |
+| `test_enviar_correo_encola_y_vuelve_pronto` | `EmailTest#enviarCorreoEncolaYVuelvePronto` | Migrada |
+| `test_enviar_correo_rechaza_un_destinatario_invalido` | `EmailTest#enviarCorreoRechazaUnDestinatarioInvalido` | Migrada |
+| `test_el_modo_directo_se_conserva` | `EmailTest#elModoDirectoSeConserva` | Migrada |
+| `test_el_modo_directo_cae_al_rele_si_falla` | `EmailTest#elModoDirectoCaeAlReleSiFalla` | Migrada |
+| `test_el_modo_directo_sin_respaldo_es_pasajero` | `EmailTest#elModoDirectoSinRespaldoEsPasajero` | Migrada |
 
 ### tests/modulos/test_escaneo_puerta.py
 
@@ -354,24 +353,24 @@ Java: `modulos.HistorialAsistenciaTest`, `modulos.HistorialPersonaTest`
 
 ### tests/modulos/test_importacion_excel.py
 
-Java: sin clase todavía
+Java: `modulos.ImportacionExcelTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_una_celda_vacia_no_convierte_los_documentos_en_decimales` | — | Programada fase 5 |
-| `test_la_ficha_tampoco_se_corrompe` | — | Programada fase 5 |
-| `test_un_documento_invalido_no_se_guarda` | — | Programada fase 5 |
-| `test_el_documento_se_normaliza_como_en_porteria` | — | Programada fase 5 |
-| `test_una_fila_que_pide_admin_se_degrada_a_usuario` | — | Programada fase 5 |
-| `test_un_cargo_inventado_se_degrada_a_aprendiz` | — | Programada fase 5 |
-| `test_la_importacion_no_la_puede_lanzar_cualquiera` | — | Programada fase 5 |
-| `test_un_correo_repetido_se_omite_y_el_resto_entra` | — | Programada fase 5 |
-| `test_un_documento_repetido_no_tumba_el_lote` | — | Programada fase 5 |
-| `test_una_fila_corrupta_no_impide_que_se_importen_las_demas` | — | Programada fase 5 |
-| `test_las_filas_vacias_del_final_se_omiten_sin_avisos` | — | Programada fase 5 |
-| `test_cada_fila_recibe_una_contrasena_distinta` | — | Programada fase 5 |
-| `test_los_hashes_no_se_repiten` | — | Programada fase 5 |
-| `test_el_lote_queda_registrado` | — | Programada fase 5 |
+| `test_una_celda_vacia_no_convierte_los_documentos_en_decimales` | `ImportacionExcelTest.DocumentoNoSeCorrompe#unaCeldaVaciaNoConvierteLosDocumentosEnDecimales` | Migrada |
+| `test_la_ficha_tampoco_se_corrompe` | `ImportacionExcelTest.DocumentoNoSeCorrompe#laFichaTampocoSeCorrompe` | Migrada |
+| `test_un_documento_invalido_no_se_guarda` | `ImportacionExcelTest.DocumentoNoSeCorrompe#unDocumentoInvalidoNoSeGuarda` | Migrada |
+| `test_el_documento_se_normaliza_como_en_porteria` | `ImportacionExcelTest.DocumentoNoSeCorrompe#elDocumentoSeNormalizaComoEnPorteria` | Migrada |
+| `test_una_fila_que_pide_admin_se_degrada_a_usuario` | `ImportacionExcelTest.ListaBlancaDeRoles#unaFilaQuePideAdminSeDegradaAUsuario` | Migrada |
+| `test_un_cargo_inventado_se_degrada_a_aprendiz` | `ImportacionExcelTest.ListaBlancaDeRoles#unCargoInventadoSeDegradaAAprendiz` | Migrada |
+| `test_la_importacion_no_la_puede_lanzar_cualquiera` | `ImportacionExcelTest.ListaBlancaDeRoles#laImportacionNoLaPuedeLanzarCualquiera` | Migrada |
+| `test_un_correo_repetido_se_omite_y_el_resto_entra` | `ImportacionExcelTest.FilasProblematicas#unCorreoRepetidoSeOmiteYElRestoEntra` | Migrada |
+| `test_un_documento_repetido_no_tumba_el_lote` | `ImportacionExcelTest.FilasProblematicas#unDocumentoRepetidoNoTumbaElLote` | Migrada |
+| `test_una_fila_corrupta_no_impide_que_se_importen_las_demas` | `ImportacionExcelTest.FilasProblematicas#unaFilaCorruptaNoImpideQueSeImportenLasDemas` | Migrada |
+| `test_las_filas_vacias_del_final_se_omiten_sin_avisos` | `ImportacionExcelTest.FilasProblematicas#lasFilasVaciasDelFinalSeOmitenSinAvisos` | Migrada |
+| `test_cada_fila_recibe_una_contrasena_distinta` | `ImportacionExcelTest.ContrasenasTemporales#cadaFilaRecibeUnaContrasenaDistinta` | Migrada |
+| `test_los_hashes_no_se_repiten` | `ImportacionExcelTest.ContrasenasTemporales#losHashesNoSeRepiten` | Migrada |
+| `test_el_lote_queda_registrado` | `ImportacionExcelTest.Auditoria#elLoteQuedaRegistrado` | Migrada |
 
 ### tests/modulos/test_integridad.py
 
@@ -407,14 +406,14 @@ Java: `modulos.LimitesTest`
 | `test_muchas_verificaciones_seguidas` | `LimitesTest#muchasVerificacionesSeguidas` | Migrada |
 | `test_muchos_movimientos_seguidos` | `LimitesTest#muchosMovimientosSeguidos` | Migrada |
 | `test_el_centro_de_ayuda_se_limita` | `LimitesTest#elCentroDeAyudaSeLimita` | Migrada |
-| `test_apagado_el_registro_sigue_funcionando` | — | Programada fase 5 |
-| `test_apagado_la_recuperacion_sigue_funcionando` | — | Programada fase 5 |
-| `test_apagado_el_widget_no_se_pinta` | — | Programada fase 5 |
-| `test_encendido_sin_solucion_no_registra` | — | Programada fase 5 |
-| `test_encendido_con_solucion_si_registra` | — | Programada fase 5 |
-| `test_una_solucion_no_sirve_dos_veces` | — | Programada fase 5 |
-| `test_una_solucion_inventada_no_pasa` | — | Programada fase 5 |
-| `test_encendido_el_widget_se_pinta` | — | Programada fase 5 |
+| `test_apagado_el_registro_sigue_funcionando` | `LimitesTest#apagadoElRegistroSigueFuncionando` | Migrada |
+| `test_apagado_la_recuperacion_sigue_funcionando` | `LimitesTest#apagadoLaRecuperacionSigueFuncionando` | Migrada |
+| `test_apagado_el_widget_no_se_pinta` | `LimitesTest#apagadoElWidgetNoSePinta` | Migrada |
+| `test_encendido_sin_solucion_no_registra` | `LimitesTest#encendidoSinSolucionNoRegistra` | Migrada |
+| `test_encendido_con_solucion_si_registra` | `LimitesTest#encendidoConSolucionSiRegistra` | Migrada |
+| `test_una_solucion_no_sirve_dos_veces` | `LimitesTest#unaSolucionNoSirveDosVeces` | Migrada |
+| `test_una_solucion_inventada_no_pasa` | `LimitesTest#unaSolucionInventadaNoPasa` | Migrada |
+| `test_encendido_el_widget_se_pinta` | `LimitesTest#encendidoElWidgetSePinta` | Migrada |
 
 ### tests/modulos/test_mensajes.py
 
@@ -574,9 +573,9 @@ Java: `modulos.SeguridadTest`
 | `test_iguales` | `SeguridadTest#iguales` | Migrada |
 | `test_distintos` | `SeguridadTest#distintos` | Migrada |
 | `test_vacios_no_coinciden` | `SeguridadTest#vaciosNoCoinciden` | Migrada |
-| `test_lista_vacia_permite_todo` | — | Programada fase 5 |
-| `test_filtra_por_dominio` | — | Programada fase 5 |
-| `test_no_se_enganya_con_subcadenas` | — | Programada fase 5 |
+| `test_lista_vacia_permite_todo` | `SeguridadTest#listaVaciaPermiteTodo` | Migrada |
+| `test_filtra_por_dominio` | `SeguridadTest#filtraPorDominio` | Migrada |
+| `test_no_se_enganya_con_subcadenas` | `SeguridadTest#noSeEnganyaConSubcadenas` | Migrada |
 | `test_quita_etiquetas` | `SeguridadTest#quitaEtiquetas` | Migrada |
 | `test_conserva_texto_normal` | `SeguridadTest#conservaTextoNormal` | Migrada |
 | `test_parsea_datetime_sin_desplazar` | `SeguridadTest#parseaDatetimeSinDesplazar` | Migrada |
@@ -707,11 +706,11 @@ Java: `roles.admin.GestionUsuariosTest`
 
 ### tests/roles/admin/test_historial_cambios.py
 
-Java: sin clase todavía
+Java: `roles.admin.HistorialCambiosTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_historial_de_cambios` | — | Programada fase 5 |
+| `test_entra_al_historial_de_cambios` | `HistorialCambiosTest#entraAlHistorialDeCambios` | Migrada |
 
 ### tests/roles/admin/test_historial_clases.py
 
@@ -781,11 +780,11 @@ Java: `roles.admin.ReportesTest`
 
 ### tests/roles/admin/test_respaldos.py
 
-Java: sin clase todavía
+Java: `roles.admin.RespaldosTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_respaldos` | — | Programada fase 5 |
+| `test_entra_a_respaldos` | `RespaldosTest#entraARespaldos` | Migrada |
 
 ### tests/roles/admin/test_revision_fotos.py
 
@@ -924,7 +923,7 @@ Java: `roles.administrador.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: gestion_usuarios, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: gestion_usuarios, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, historial_cambios, respaldos) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/administrador/test_tutorial.py
 
@@ -1017,7 +1016,7 @@ Java: `roles.administrativo.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, historial_cambios, respaldos) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/administrativo/test_tutorial.py
 
@@ -1100,7 +1099,7 @@ Java: `roles.aprendiz.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes, historial_cambios, respaldos) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/aprendiz/test_tutorial.py
 
@@ -1211,7 +1210,7 @@ Java: `roles.celador.RestringidasTest` (cada prueba corre para celador y porteri
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: gestion_usuarios, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: gestion_usuarios, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes, historial_cambios, respaldos) | `RestringidasTest#noEntra` | Migrada |
 | `test_no_registra_equipos` | `RestringidasTest#noRegistraEquipos` | Migrada |
 
 ### tests/roles/celador/test_tutorial.py
@@ -1295,7 +1294,7 @@ Java: `roles.contratista.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes, historial_cambios, respaldos) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/contratista/test_tutorial.py
 
@@ -1387,7 +1386,7 @@ Java: `roles.coordinacion.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes, historial_cambios, respaldos) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/coordinacion/test_tutorial.py
 
@@ -1470,7 +1469,7 @@ Java: `roles.funcionario.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes, historial_cambios, respaldos) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/funcionario/test_tutorial.py
 
@@ -1571,7 +1570,7 @@ Java: `roles.instructor.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, fichas, historial_clases, bandeja_mensajes, historial_cambios, respaldos) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/instructor/test_tutorial.py
 
@@ -1663,7 +1662,7 @@ Java: `roles.subdirector.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes, historial_cambios, respaldos) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/subdirector/test_tutorial.py
 
@@ -1737,7 +1736,7 @@ Java: `roles.trabajador.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes, historial_cambios, respaldos) | `RestringidasTest#noEntra` | Migrada |
 | `test_no_registra_equipos` | `RestringidasTest#noRegistraEquipos` | Migrada |
 
 ### tests/roles/trabajador/test_tutorial.py
@@ -1889,13 +1888,13 @@ Java: `vistas.usuarios.GestionUsuariosTest`
 
 ### tests/vistas/historial_cambios/test_historial_cambios.py
 
-Java: sin clase todavía
+Java: `vistas.auditoria.HistorialCambiosTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | — | Programada fase 5 |
-| `test_sin_sesion_pide_login` | — | Programada fase 5 |
-| `test_muestra_los_cambios_registrados` | — | Programada fase 5 |
+| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | `HistorialCambiosTest#accesoSegunElPerfil` | Migrada |
+| `test_sin_sesion_pide_login` | `HistorialCambiosTest#sinSesionPideLogin` | Migrada |
+| `test_muestra_los_cambios_registrados` | `HistorialCambiosTest#muestraLosCambiosRegistrados` | Migrada |
 
 ### tests/vistas/historial_clases/test_historial_clases.py
 
@@ -1987,36 +1986,36 @@ Java: `vistas.perfil.PerfilTest`
 
 ### tests/vistas/politica_privacidad/test_politica_privacidad.py
 
-Java: sin clase todavía
+Java: `vistas.privacidad.PoliticaPrivacidadTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_abre_sin_sesion` | — | Programada fase 5 |
-| `test_abre_con_sesion` (casos: 12 perfiles) | — | Programada fase 5 |
+| `test_abre_sin_sesion` | `PoliticaPrivacidadTest#abreSinSesion` | Migrada |
+| `test_abre_con_sesion` (casos: 12 perfiles) | `PoliticaPrivacidadTest#abreConSesion` | Migrada |
 
 ### tests/vistas/recuperacion/test_recuperacion.py
 
-Java: sin clase todavía
+Java: `vistas.recuperacion.RecuperacionTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_la_pagina_abre` | — | Programada fase 5 |
-| `test_no_se_salta_al_paso_de_verificar` | — | Programada fase 5 |
-| `test_no_se_salta_al_paso_de_cambiar` | — | Programada fase 5 |
-| `test_cualquier_perfil_pide_codigo` (casos: 12 perfiles) | — | Programada fase 5 |
-| `test_cambia_la_contrasena_con_el_codigo` | — | Programada fase 5 |
+| `test_la_pagina_abre` | `RecuperacionTest#laPaginaAbre` | Migrada |
+| `test_no_se_salta_al_paso_de_verificar` | `RecuperacionTest#noSeSaltaAlPasoDeVerificar` | Migrada |
+| `test_no_se_salta_al_paso_de_cambiar` | `RecuperacionTest#noSeSaltaAlPasoDeCambiar` | Migrada |
+| `test_cualquier_perfil_pide_codigo` (casos: 12 perfiles) | `RecuperacionTest#cualquierPerfilPideCodigo` | Migrada |
+| `test_cambia_la_contrasena_con_el_codigo` | `RecuperacionTest#cambiaLaContrasenaConElCodigo` | Migrada |
 
 ### tests/vistas/registro/test_registro.py
 
-Java: sin clase todavía
+Java: `vistas.registro.RegistroTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_la_pagina_abre` | — | Programada fase 5 |
-| `test_se_registra_como_aprendiz` | — | Programada fase 5 |
-| `test_no_puede_elegir_otro_cargo` | — | Programada fase 5 |
-| `test_contrasenas_distintas_no_registran` | — | Programada fase 5 |
-| `test_correo_repetido_no_registra` | — | Programada fase 5 |
+| `test_la_pagina_abre` | `RegistroTest#laPaginaAbre` | Migrada |
+| `test_se_registra_como_aprendiz` | `RegistroTest#seRegistraComoAprendiz` | Migrada |
+| `test_no_puede_elegir_otro_cargo` | `RegistroTest#noPuedeElegirOtroCargo` | Migrada |
+| `test_contrasenas_distintas_no_registran` | `RegistroTest#contrasenasDistintasNoRegistran` | Migrada |
+| `test_correo_repetido_no_registra` | `RegistroTest#correoRepetidoNoRegistra` | Migrada |
 
 ### tests/vistas/reportes/test_reportes.py
 
@@ -2030,14 +2029,14 @@ Java: `vistas.reportes.ReportesTest`
 
 ### tests/vistas/respaldos/test_respaldos.py
 
-Java: sin clase todavía
+Java: `vistas.respaldos.RespaldosTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | — | Programada fase 5 |
-| `test_sin_sesion_pide_login` | — | Programada fase 5 |
-| `test_descargar_sin_permiso_no_descarga` | — | Programada fase 5 |
-| `test_no_descarga_fuera_de_la_carpeta` | — | Programada fase 5 |
+| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | `RespaldosTest#accesoSegunElPerfil` | Migrada |
+| `test_sin_sesion_pide_login` | `RespaldosTest#sinSesionPideLogin` | Migrada |
+| `test_descargar_sin_permiso_no_descarga` | `RespaldosTest#descargarSinPermisoNoDescarga` | Migrada |
+| `test_no_descarga_fuera_de_la_carpeta` | `RespaldosTest#noDescargaFueraDeLaCarpeta` | Migrada |
 
 ### tests/vistas/revision_fotos/test_revision_fotos.py
 
@@ -2063,23 +2062,22 @@ Java: `vistas.tutorial.TutorialTest`
 
 ### tests/vistas/verificacion/test_verificacion.py
 
-Java: sin clase todavía
+Java: `vistas.verificacion.VerificacionTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_ya_verificado_no_entra` | — | Programada fase 5 |
-| `test_verifica_con_el_codigo_correcto` | — | Programada fase 5 |
-| `test_codigo_incorrecto_no_verifica` | — | Programada fase 5 |
-| `test_codigo_expirado_no_verifica` | — | Programada fase 5 |
+| `test_ya_verificado_no_entra` | `VerificacionTest#yaVerificadoNoEntra` | Migrada |
+| `test_verifica_con_el_codigo_correcto` | `VerificacionTest#verificaConElCodigoCorrecto` | Migrada |
+| `test_codigo_incorrecto_no_verifica` | `VerificacionTest#codigoIncorrectoNoVerifica` | Migrada |
+| `test_codigo_expirado_no_verifica` | `VerificacionTest#codigoExpiradoNoVerifica` | Migrada |
 
 ## Resumen
 
 | Estado | Funciones pytest |
 |---|---|
-| Migrada | 695 |
-| Programada fase 5 | 98 |
+| Migrada | 793 |
 | Descartada | 11 |
 | **Total** | **804** |
 
 Portería 2 tiene 804 funciones `test_` en 174 archivos; todas aparecen arriba.
-En `test_restringidas.py` de cada perfil la función está migrada con los casos cuyas pantallas ya existen; los casos de pantallas de fases futuras se indican en la misma fila.
+En `test_restringidas.py` de cada perfil la función está migrada con todos sus casos, listados en la misma fila.

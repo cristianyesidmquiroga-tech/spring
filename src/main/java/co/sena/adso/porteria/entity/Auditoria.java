@@ -69,6 +69,7 @@ public class Auditoria {
     }
 
     public Long getId() { return id; }
+    public Long getUsuarioId() { return usuarioId; }
     public String getNombreUsuario() { return nombreUsuario; }
     public String getTablaAfectada() { return tablaAfectada; }
     public Long getRegistroId() { return registroId; }
