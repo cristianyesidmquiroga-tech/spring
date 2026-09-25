@@ -39,7 +39,7 @@ Las demás (carnet, equipos, escaner, login, panel, pases, perfil, reportes, y l
 ## Estados
 
 - **Migrada**: existe el método Java y pasa.
-- **Programada fase N**: la función todavía no existe en Spring. Fase 4, soporte: mensajes, bandeja, centro de ayuda y tutorial. Fase 5, cuentas y operación: registro, verificación de correo, recuperación, historial de cambios, respaldos, importación de Excel, captcha y política de privacidad.
+- **Programada fase N**: la función todavía no existe en Spring. Fase 5, cuentas y operación: registro, verificación de correo, recuperación, historial de cambios, respaldos, importación de Excel, captcha y política de privacidad.
 - **Descartada**: no se migra por una decisión explícita; debajo de la tabla del archivo van el motivo y la fecha.
 
 Cada clase Java empieza con el comentario `// Portería 2: tests/<ruta>.py`, que es el archivo que se lista en cada sección.
@@ -381,7 +381,7 @@ Java: `modulos.IntegridadTest`
 |---|---|---|
 | `test_con_asistencias` | `IntegridadTest#conAsistencias` | Migrada |
 | `test_instructor_con_clases_dictadas` | `IntegridadTest#instructorConClasesDictadas` | Migrada |
-| `test_con_mensajes` | — | Programada fase 4 |
+| `test_con_mensajes` | `IntegridadTest#conMensajes` | Migrada |
 | `test_operador_de_porteria` | `IntegridadTest#operadorDePorteria` | Migrada |
 | `test_celador_con_turnos_de_la_tabla_retirada` | — | Descartada |
 | `test_equipo_que_cruzo_la_porteria` | `IntegridadTest#equipoQueCruzoLaPorteria` | Migrada |
@@ -406,7 +406,7 @@ Java: `modulos.LimitesTest`
 | `test_cada_ip_tiene_su_propio_contador` | `LimitesTest#cadaIpTieneSuPropioContador` | Migrada |
 | `test_muchas_verificaciones_seguidas` | `LimitesTest#muchasVerificacionesSeguidas` | Migrada |
 | `test_muchos_movimientos_seguidos` | `LimitesTest#muchosMovimientosSeguidos` | Migrada |
-| `test_el_centro_de_ayuda_se_limita` | — | Programada fase 4 |
+| `test_el_centro_de_ayuda_se_limita` | `LimitesTest#elCentroDeAyudaSeLimita` | Migrada |
 | `test_apagado_el_registro_sigue_funcionando` | — | Programada fase 5 |
 | `test_apagado_la_recuperacion_sigue_funcionando` | — | Programada fase 5 |
 | `test_apagado_el_widget_no_se_pinta` | — | Programada fase 5 |
@@ -418,28 +418,28 @@ Java: `modulos.LimitesTest`
 
 ### tests/modulos/test_mensajes.py
 
-Java: sin clase todavía
+Java: `modulos.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_puede_enviar_un_mensaje` | — | Programada fase 4 |
-| `test_un_mensaje_vacio_no_se_guarda` | — | Programada fase 4 |
-| `test_solo_ve_su_propio_hilo` | — | Programada fase 4 |
-| `test_no_puede_entrar_a_la_bandeja_del_admin` | — | Programada fase 4 |
-| `test_no_puede_escribirle_a_otro_como_si_fuera_admin` | — | Programada fase 4 |
-| `test_el_admin_escribe_a_una_persona` | — | Programada fase 4 |
-| `test_la_persona_ve_lo_que_le_escribio_el_admin` | — | Programada fase 4 |
-| `test_abrir_el_hilo_marca_los_mensajes_como_leidos` | — | Programada fase 4 |
-| `test_escribir_a_alguien_que_no_existe` | — | Programada fase 4 |
-| `test_al_rechazar_la_foto_queda_el_motivo_en_el_hilo` | — | Programada fase 4 |
-| `test_al_aprobar_tambien_queda_constancia` | — | Programada fase 4 |
-| `test_cualquiera_puede_ver_las_preguntas_frecuentes` | — | Programada fase 4 |
-| `test_contactar_abre_la_conversacion` | — | Programada fase 4 |
-| `test_sin_detalle_no_se_abre_nada` | — | Programada fase 4 |
-| `test_el_administrativo_puede_asesorar` | — | Programada fase 4 |
-| `test_el_aprendiz_no_puede_asesorar` | — | Programada fase 4 |
-| `test_el_celador_no_puede_asesorar` | — | Programada fase 4 |
-| `test_el_instructor_no_puede_asesorar` | — | Programada fase 4 |
+| `test_puede_enviar_un_mensaje` | `MensajesTest.UsuarioEscribe#puedeEnviarUnMensaje` | Migrada |
+| `test_un_mensaje_vacio_no_se_guarda` | `MensajesTest.UsuarioEscribe#unMensajeVacioNoSeGuarda` | Migrada |
+| `test_solo_ve_su_propio_hilo` | `MensajesTest.UsuarioEscribe#soloVeSuPropioHilo` | Migrada |
+| `test_no_puede_entrar_a_la_bandeja_del_admin` | `MensajesTest.UsuarioEscribe#noPuedeEntrarALaBandejaDelAdmin` | Migrada |
+| `test_no_puede_escribirle_a_otro_como_si_fuera_admin` | `MensajesTest.UsuarioEscribe#noPuedeEscribirleAOtroComoSiFueraAdmin` | Migrada |
+| `test_el_admin_escribe_a_una_persona` | `MensajesTest.AdminResponde#elAdminEscribeAUnaPersona` | Migrada |
+| `test_la_persona_ve_lo_que_le_escribio_el_admin` | `MensajesTest.AdminResponde#laPersonaVeLoQueLeEscribioElAdmin` | Migrada |
+| `test_abrir_el_hilo_marca_los_mensajes_como_leidos` | `MensajesTest.AdminResponde#abrirElHiloMarcaLosMensajesComoLeidos` | Migrada |
+| `test_escribir_a_alguien_que_no_existe` | `MensajesTest.AdminResponde#escribirAAlguienQueNoExiste` | Migrada |
+| `test_al_rechazar_la_foto_queda_el_motivo_en_el_hilo` | `MensajesTest.RechazoDejaMensaje#alRechazarLaFotoQuedaElMotivoEnElHilo` | Migrada |
+| `test_al_aprobar_tambien_queda_constancia` | `MensajesTest.RechazoDejaMensaje#alAprobarTambienQuedaConstancia` | Migrada |
+| `test_cualquiera_puede_ver_las_preguntas_frecuentes` | `MensajesTest.CentroDeAyuda#cualquieraPuedeVerLasPreguntasFrecuentes` | Migrada |
+| `test_contactar_abre_la_conversacion` | `MensajesTest.CentroDeAyuda#contactarAbreLaConversacion` | Migrada |
+| `test_sin_detalle_no_se_abre_nada` | `MensajesTest.CentroDeAyuda#sinDetalleNoSeAbreNada` | Migrada |
+| `test_el_administrativo_puede_asesorar` | `MensajesTest.QuienPuedeAsesorar#elAdministrativoPuedeAsesorar` | Migrada |
+| `test_el_aprendiz_no_puede_asesorar` | `MensajesTest.QuienPuedeAsesorar#elAprendizNoPuedeAsesorar` | Migrada |
+| `test_el_celador_no_puede_asesorar` | `MensajesTest.QuienPuedeAsesorar#elCeladorNoPuedeAsesorar` | Migrada |
+| `test_el_instructor_no_puede_asesorar` | `MensajesTest.QuienPuedeAsesorar#elInstructorNoPuedeAsesorar` | Migrada |
 
 ### tests/modulos/test_minimizacion.py
 
@@ -447,8 +447,8 @@ Java: `modulos.MinimizacionTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_la_bandeja_del_asesor_no_muestra_la_cedula_completa` | — | Programada fase 4 |
-| `test_el_hilo_abierto_no_muestra_cedula_completa_ni_correo` | — | Programada fase 4 |
+| `test_la_bandeja_del_asesor_no_muestra_la_cedula_completa` | `MinimizacionTest#laBandejaDelAsesorNoMuestraLaCedulaCompleta` | Migrada |
+| `test_el_hilo_abierto_no_muestra_cedula_completa_ni_correo` | `MinimizacionTest#elHiloAbiertoNoMuestraCedulaCompletaNiCorreo` | Migrada |
 | `test_porteria_si_ve_el_documento_completo` | `MinimizacionTest#porteriaSiVeElDocumentoCompleto` | Migrada |
 | `test_no_muestra_el_correo_en_las_tarjetas` | `MinimizacionTest#noMuestraElCorreoEnLasTarjetas` | Migrada |
 | `test_la_lista_esta_paginada` | `MinimizacionTest#laListaEstaPaginada` | Migrada |
@@ -587,21 +587,21 @@ Java: `modulos.SeguridadTest`
 
 ### tests/modulos/test_tutorial.py
 
-Java: sin clase todavía
+Java: `modulos.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_se_marca_el_tutorial_como_visto` | — | Programada fase 4 |
-| `test_marcarlo_dos_veces_no_falla` | — | Programada fase 4 |
-| `test_sin_sesion_no_se_puede_marcar` | — | Programada fase 4 |
-| `test_no_se_puede_marcar_el_de_otra_persona` | — | Programada fase 4 |
-| `test_la_pagina_del_tutorial_carga` | — | Programada fase 4 |
-| `test_sin_sesion_redirige_al_login` | — | Programada fase 4 |
-| `test_ofrece_relanzar_el_recorrido_guiado` | — | Programada fase 4 |
-| `test_aparece_con_el_perfil_incompleto` | — | Programada fase 4 |
-| `test_desaparece_con_el_perfil_completo` | — | Programada fase 4 |
-| `test_el_script_indica_que_no_se_ha_visto` | — | Programada fase 4 |
-| `test_el_script_indica_que_ya_se_vio` | — | Programada fase 4 |
+| `test_se_marca_el_tutorial_como_visto` | `TutorialTest.MarcarComoVisto#seMarcaElTutorialComoVisto` | Migrada |
+| `test_marcarlo_dos_veces_no_falla` | `TutorialTest.MarcarComoVisto#marcarloDosVecesNoFalla` | Migrada |
+| `test_sin_sesion_no_se_puede_marcar` | `TutorialTest.MarcarComoVisto#sinSesionNoSePuedeMarcar` | Migrada |
+| `test_no_se_puede_marcar_el_de_otra_persona` | `TutorialTest.MarcarComoVisto#noSePuedeMarcarElDeOtraPersona` | Migrada |
+| `test_la_pagina_del_tutorial_carga` | `TutorialTest.VersionEnTexto#laPaginaDelTutorialCarga` | Migrada |
+| `test_sin_sesion_redirige_al_login` | `TutorialTest.VersionEnTexto#sinSesionRedirigeAlLogin` | Migrada |
+| `test_ofrece_relanzar_el_recorrido_guiado` | `TutorialTest.VersionEnTexto#ofreceRelanzarElRecorridoGuiado` | Migrada |
+| `test_aparece_con_el_perfil_incompleto` | `TutorialTest.BotonDeAcceso#apareceConElPerfilIncompleto` | Migrada |
+| `test_desaparece_con_el_perfil_completo` | `TutorialTest.BotonDeAcceso#desapareceConElPerfilCompleto` | Migrada |
+| `test_el_script_indica_que_no_se_ha_visto` | `TutorialTest.RecorridoGuiado#elScriptIndicaQueNoSeHaVisto` | Migrada |
+| `test_el_script_indica_que_ya_se_vio` | `TutorialTest.RecorridoGuiado#elScriptIndicaQueYaSeVio` | Migrada |
 
 ### tests/roles/admin/test_ambientes.py
 
@@ -623,22 +623,22 @@ Java: `roles.admin.AsistenciaTest`
 
 ### tests/roles/admin/test_ayuda.py
 
-Java: sin clase todavía
+Java: `roles.admin.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_centro_de_ayuda` | — | Programada fase 4 |
-| `test_contacta_a_un_asesor` | — | Programada fase 4 |
+| `test_entra_al_centro_de_ayuda` | `AyudaTest#entraAlCentroDeAyuda` | Migrada |
+| `test_contacta_a_un_asesor` | `AyudaTest#contactaAUnAsesor` | Migrada |
 
 ### tests/roles/admin/test_bandeja_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.admin.BandejaMensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_la_bandeja` | — | Programada fase 4 |
-| `test_abre_la_conversacion_de_otra_persona` | — | Programada fase 4 |
-| `test_responde_a_otra_persona` | — | Programada fase 4 |
+| `test_entra_a_la_bandeja` | `BandejaMensajesTest#entraALaBandeja` | Migrada |
+| `test_abre_la_conversacion_de_otra_persona` | `BandejaMensajesTest#abreLaConversacionDeOtraPersona` | Migrada |
+| `test_responde_a_otra_persona` | `BandejaMensajesTest#respondeAOtraPersona` | Migrada |
 
 ### tests/roles/admin/test_carnet.py
 
@@ -734,13 +734,13 @@ Java: `roles.admin.HistorialIngresosTest`
 
 ### tests/roles/admin/test_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.admin.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_sus_mensajes` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_entra_a_sus_mensajes` | `MensajesTest#entraASusMensajes` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_vacio_no_se_envia` | `MensajesTest#mensajeVacioNoSeEnvia` | Migrada |
 
 ### tests/roles/admin/test_panel.py
 
@@ -798,31 +798,31 @@ Java: `roles.admin.RevisionFotosTest`
 
 ### tests/roles/admin/test_tutorial.py
 
-Java: sin clase todavía
+Java: `roles.admin.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_tutorial` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_entra_al_tutorial` | `TutorialTest#entraAlTutorial` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/roles/administrador/test_ayuda.py
 
-Java: sin clase todavía
+Java: `roles.administrador.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_centro_de_ayuda` | — | Programada fase 4 |
-| `test_contacta_a_un_asesor` | — | Programada fase 4 |
+| `test_entra_al_centro_de_ayuda` | `AyudaTest#entraAlCentroDeAyuda` | Migrada |
+| `test_contacta_a_un_asesor` | `AyudaTest#contactaAUnAsesor` | Migrada |
 
 ### tests/roles/administrador/test_bandeja_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.administrador.BandejaMensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_la_bandeja` | — | Programada fase 4 |
-| `test_abre_la_conversacion_de_otra_persona` | — | Programada fase 4 |
-| `test_responde_a_otra_persona` | — | Programada fase 4 |
+| `test_entra_a_la_bandeja` | `BandejaMensajesTest#entraALaBandeja` | Migrada |
+| `test_abre_la_conversacion_de_otra_persona` | `BandejaMensajesTest#abreLaConversacionDeOtraPersona` | Migrada |
+| `test_responde_a_otra_persona` | `BandejaMensajesTest#respondeAOtraPersona` | Migrada |
 
 ### tests/roles/administrador/test_carnet.py
 
@@ -873,13 +873,13 @@ Java: `roles.administrador.HistorialIngresosTest`
 
 ### tests/roles/administrador/test_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.administrador.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_sus_mensajes` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_entra_a_sus_mensajes` | `MensajesTest#entraASusMensajes` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_vacio_no_se_envia` | `MensajesTest#mensajeVacioNoSeEnvia` | Migrada |
 
 ### tests/roles/administrador/test_panel.py
 
@@ -928,31 +928,31 @@ Java: `roles.administrador.RestringidasTest`
 
 ### tests/roles/administrador/test_tutorial.py
 
-Java: sin clase todavía
+Java: `roles.administrador.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_tutorial` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_entra_al_tutorial` | `TutorialTest#entraAlTutorial` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/roles/administrativo/test_ayuda.py
 
-Java: sin clase todavía
+Java: `roles.administrativo.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_centro_de_ayuda` | — | Programada fase 4 |
-| `test_contacta_a_un_asesor` | — | Programada fase 4 |
+| `test_entra_al_centro_de_ayuda` | `AyudaTest#entraAlCentroDeAyuda` | Migrada |
+| `test_contacta_a_un_asesor` | `AyudaTest#contactaAUnAsesor` | Migrada |
 
 ### tests/roles/administrativo/test_bandeja_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.administrativo.BandejaMensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_la_bandeja` | — | Programada fase 4 |
-| `test_abre_la_conversacion_de_otra_persona` | — | Programada fase 4 |
-| `test_responde_a_otra_persona` | — | Programada fase 4 |
+| `test_entra_a_la_bandeja` | `BandejaMensajesTest#entraALaBandeja` | Migrada |
+| `test_abre_la_conversacion_de_otra_persona` | `BandejaMensajesTest#abreLaConversacionDeOtraPersona` | Migrada |
+| `test_responde_a_otra_persona` | `BandejaMensajesTest#respondeAOtraPersona` | Migrada |
 
 ### tests/roles/administrativo/test_carnet.py
 
@@ -993,13 +993,13 @@ Java: `roles.administrativo.HistorialIngresosTest`
 
 ### tests/roles/administrativo/test_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.administrativo.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_sus_mensajes` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_entra_a_sus_mensajes` | `MensajesTest#entraASusMensajes` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_vacio_no_se_envia` | `MensajesTest#mensajeVacioNoSeEnvia` | Migrada |
 
 ### tests/roles/administrativo/test_perfil.py
 
@@ -1021,21 +1021,21 @@ Java: `roles.administrativo.RestringidasTest`
 
 ### tests/roles/administrativo/test_tutorial.py
 
-Java: sin clase todavía
+Java: `roles.administrativo.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_tutorial` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_entra_al_tutorial` | `TutorialTest#entraAlTutorial` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/roles/aprendiz/test_ayuda.py
 
-Java: sin clase todavía
+Java: `roles.aprendiz.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_centro_de_ayuda` | — | Programada fase 4 |
-| `test_contacta_a_un_asesor` | — | Programada fase 4 |
+| `test_entra_al_centro_de_ayuda` | `AyudaTest#entraAlCentroDeAyuda` | Migrada |
+| `test_contacta_a_un_asesor` | `AyudaTest#contactaAUnAsesor` | Migrada |
 
 ### tests/roles/aprendiz/test_carnet.py
 
@@ -1076,13 +1076,13 @@ Java: `roles.aprendiz.HistorialIngresosTest`
 
 ### tests/roles/aprendiz/test_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.aprendiz.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_sus_mensajes` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_entra_a_sus_mensajes` | `MensajesTest#entraASusMensajes` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_vacio_no_se_envia` | `MensajesTest#mensajeVacioNoSeEnvia` | Migrada |
 
 ### tests/roles/aprendiz/test_perfil.py
 
@@ -1100,25 +1100,25 @@ Java: `roles.aprendiz.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/aprendiz/test_tutorial.py
 
-Java: sin clase todavía
+Java: `roles.aprendiz.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_tutorial` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_entra_al_tutorial` | `TutorialTest#entraAlTutorial` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/roles/celador/test_ayuda.py
 
-Java: sin clase todavía
+Java: `roles.celador.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_centro_de_ayuda` | — | Programada fase 4 |
-| `test_contacta_a_un_asesor` | — | Programada fase 4 |
+| `test_entra_al_centro_de_ayuda` | `AyudaTest#entraAlCentroDeAyuda` | Migrada |
+| `test_contacta_a_un_asesor` | `AyudaTest#contactaAUnAsesor` | Migrada |
 
 ### tests/roles/celador/test_carnet.py
 
@@ -1160,13 +1160,13 @@ Java: `roles.celador.HistorialIngresosTest` (cada prueba corre para celador y po
 
 ### tests/roles/celador/test_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.celador.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_sus_mensajes` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_entra_a_sus_mensajes` | `MensajesTest#entraASusMensajes` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_vacio_no_se_envia` | `MensajesTest#mensajeVacioNoSeEnvia` | Migrada |
 
 ### tests/roles/celador/test_panel.py
 
@@ -1211,26 +1211,26 @@ Java: `roles.celador.RestringidasTest` (cada prueba corre para celador y porteri
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: gestion_usuarios, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: gestion_usuarios, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 | `test_no_registra_equipos` | `RestringidasTest#noRegistraEquipos` | Migrada |
 
 ### tests/roles/celador/test_tutorial.py
 
-Java: sin clase todavía
+Java: `roles.celador.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_tutorial` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_entra_al_tutorial` | `TutorialTest#entraAlTutorial` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/roles/contratista/test_ayuda.py
 
-Java: sin clase todavía
+Java: `roles.contratista.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_centro_de_ayuda` | — | Programada fase 4 |
-| `test_contacta_a_un_asesor` | — | Programada fase 4 |
+| `test_entra_al_centro_de_ayuda` | `AyudaTest#entraAlCentroDeAyuda` | Migrada |
+| `test_contacta_a_un_asesor` | `AyudaTest#contactaAUnAsesor` | Migrada |
 
 ### tests/roles/contratista/test_carnet.py
 
@@ -1271,13 +1271,13 @@ Java: `roles.contratista.HistorialIngresosTest`
 
 ### tests/roles/contratista/test_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.contratista.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_sus_mensajes` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_entra_a_sus_mensajes` | `MensajesTest#entraASusMensajes` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_vacio_no_se_envia` | `MensajesTest#mensajeVacioNoSeEnvia` | Migrada |
 
 ### tests/roles/contratista/test_perfil.py
 
@@ -1295,16 +1295,16 @@ Java: `roles.contratista.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/contratista/test_tutorial.py
 
-Java: sin clase todavía
+Java: `roles.contratista.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_tutorial` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_entra_al_tutorial` | `TutorialTest#entraAlTutorial` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/roles/coordinacion/test_ambientes.py
 
@@ -1317,12 +1317,12 @@ Java: `roles.coordinacion.AmbientesTest`
 
 ### tests/roles/coordinacion/test_ayuda.py
 
-Java: sin clase todavía
+Java: `roles.coordinacion.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_centro_de_ayuda` | — | Programada fase 4 |
-| `test_contacta_a_un_asesor` | — | Programada fase 4 |
+| `test_entra_al_centro_de_ayuda` | `AyudaTest#entraAlCentroDeAyuda` | Migrada |
+| `test_contacta_a_un_asesor` | `AyudaTest#contactaAUnAsesor` | Migrada |
 
 ### tests/roles/coordinacion/test_carnet.py
 
@@ -1363,13 +1363,13 @@ Java: `roles.coordinacion.HistorialIngresosTest`
 
 ### tests/roles/coordinacion/test_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.coordinacion.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_sus_mensajes` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_entra_a_sus_mensajes` | `MensajesTest#entraASusMensajes` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_vacio_no_se_envia` | `MensajesTest#mensajeVacioNoSeEnvia` | Migrada |
 
 ### tests/roles/coordinacion/test_perfil.py
 
@@ -1387,25 +1387,25 @@ Java: `roles.coordinacion.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/coordinacion/test_tutorial.py
 
-Java: sin clase todavía
+Java: `roles.coordinacion.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_tutorial` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_entra_al_tutorial` | `TutorialTest#entraAlTutorial` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/roles/funcionario/test_ayuda.py
 
-Java: sin clase todavía
+Java: `roles.funcionario.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_centro_de_ayuda` | — | Programada fase 4 |
-| `test_contacta_a_un_asesor` | — | Programada fase 4 |
+| `test_entra_al_centro_de_ayuda` | `AyudaTest#entraAlCentroDeAyuda` | Migrada |
+| `test_contacta_a_un_asesor` | `AyudaTest#contactaAUnAsesor` | Migrada |
 
 ### tests/roles/funcionario/test_carnet.py
 
@@ -1446,13 +1446,13 @@ Java: `roles.funcionario.HistorialIngresosTest`
 
 ### tests/roles/funcionario/test_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.funcionario.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_sus_mensajes` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_entra_a_sus_mensajes` | `MensajesTest#entraASusMensajes` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_vacio_no_se_envia` | `MensajesTest#mensajeVacioNoSeEnvia` | Migrada |
 
 ### tests/roles/funcionario/test_perfil.py
 
@@ -1470,16 +1470,16 @@ Java: `roles.funcionario.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/funcionario/test_tutorial.py
 
-Java: sin clase todavía
+Java: `roles.funcionario.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_tutorial` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_entra_al_tutorial` | `TutorialTest#entraAlTutorial` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/roles/instructor/test_asistencia.py
 
@@ -1492,12 +1492,12 @@ Java: `roles.instructor.AsistenciaTest`
 
 ### tests/roles/instructor/test_ayuda.py
 
-Java: sin clase todavía
+Java: `roles.instructor.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_centro_de_ayuda` | — | Programada fase 4 |
-| `test_contacta_a_un_asesor` | — | Programada fase 4 |
+| `test_entra_al_centro_de_ayuda` | `AyudaTest#entraAlCentroDeAyuda` | Migrada |
+| `test_contacta_a_un_asesor` | `AyudaTest#contactaAUnAsesor` | Migrada |
 
 ### tests/roles/instructor/test_carnet.py
 
@@ -1547,13 +1547,13 @@ Java: `roles.instructor.HistorialIngresosTest`
 
 ### tests/roles/instructor/test_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.instructor.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_sus_mensajes` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_entra_a_sus_mensajes` | `MensajesTest#entraASusMensajes` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_vacio_no_se_envia` | `MensajesTest#mensajeVacioNoSeEnvia` | Migrada |
 
 ### tests/roles/instructor/test_perfil.py
 
@@ -1571,16 +1571,16 @@ Java: `roles.instructor.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/instructor/test_tutorial.py
 
-Java: sin clase todavía
+Java: `roles.instructor.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_tutorial` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_entra_al_tutorial` | `TutorialTest#entraAlTutorial` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/roles/subdirector/test_ambientes.py
 
@@ -1593,12 +1593,12 @@ Java: `roles.subdirector.AmbientesTest`
 
 ### tests/roles/subdirector/test_ayuda.py
 
-Java: sin clase todavía
+Java: `roles.subdirector.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_centro_de_ayuda` | — | Programada fase 4 |
-| `test_contacta_a_un_asesor` | — | Programada fase 4 |
+| `test_entra_al_centro_de_ayuda` | `AyudaTest#entraAlCentroDeAyuda` | Migrada |
+| `test_contacta_a_un_asesor` | `AyudaTest#contactaAUnAsesor` | Migrada |
 
 ### tests/roles/subdirector/test_carnet.py
 
@@ -1639,13 +1639,13 @@ Java: `roles.subdirector.HistorialIngresosTest`
 
 ### tests/roles/subdirector/test_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.subdirector.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_sus_mensajes` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_entra_a_sus_mensajes` | `MensajesTest#entraASusMensajes` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_vacio_no_se_envia` | `MensajesTest#mensajeVacioNoSeEnvia` | Migrada |
 
 ### tests/roles/subdirector/test_perfil.py
 
@@ -1663,25 +1663,25 @@ Java: `roles.subdirector.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 
 ### tests/roles/subdirector/test_tutorial.py
 
-Java: sin clase todavía
+Java: `roles.subdirector.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_tutorial` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_entra_al_tutorial` | `TutorialTest#entraAlTutorial` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/roles/trabajador/test_ayuda.py
 
-Java: sin clase todavía
+Java: `roles.trabajador.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_centro_de_ayuda` | — | Programada fase 4 |
-| `test_contacta_a_un_asesor` | — | Programada fase 4 |
+| `test_entra_al_centro_de_ayuda` | `AyudaTest#entraAlCentroDeAyuda` | Migrada |
+| `test_contacta_a_un_asesor` | `AyudaTest#contactaAUnAsesor` | Migrada |
 
 ### tests/roles/trabajador/test_carnet.py
 
@@ -1713,13 +1713,13 @@ Java: `roles.trabajador.HistorialIngresosTest`
 
 ### tests/roles/trabajador/test_mensajes.py
 
-Java: sin clase todavía
+Java: `roles.trabajador.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_a_sus_mensajes` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_entra_a_sus_mensajes` | `MensajesTest#entraASusMensajes` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_vacio_no_se_envia` | `MensajesTest#mensajeVacioNoSeEnvia` | Migrada |
 
 ### tests/roles/trabajador/test_perfil.py
 
@@ -1737,17 +1737,17 @@ Java: `roles.trabajador.RestringidasTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases; programados: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
+| `test_no_entra` (casos migrados: escaner, gestion_usuarios, panel, pases, reportes, revision_fotos, ambientes, asistencia, comunicados, fichas, historial_clases, bandeja_mensajes; programados: historial_cambios y respaldos (fase 5)) | `RestringidasTest#noEntra` | Migrada |
 | `test_no_registra_equipos` | `RestringidasTest#noRegistraEquipos` | Migrada |
 
 ### tests/roles/trabajador/test_tutorial.py
 
-Java: sin clase todavía
+Java: `roles.trabajador.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_entra_al_tutorial` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_entra_al_tutorial` | `TutorialTest#entraAlTutorial` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/vistas/ambientes/test_ambientes.py
 
@@ -1772,26 +1772,26 @@ Java: `vistas.asistencia.AsistenciaTest`
 
 ### tests/vistas/ayuda/test_ayuda.py
 
-Java: sin clase todavía
+Java: `vistas.ayuda.AyudaTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_todos_los_perfiles_entran` (casos: 12 perfiles) | — | Programada fase 4 |
-| `test_sin_sesion_pide_login` | — | Programada fase 4 |
-| `test_contacto_con_asunto_llega_a_mensajes` | — | Programada fase 4 |
-| `test_contacto_vacio_no_se_envia` | — | Programada fase 4 |
+| `test_todos_los_perfiles_entran` (casos: 12 perfiles) | `AyudaTest#todosLosPerfilesEntran` | Migrada |
+| `test_sin_sesion_pide_login` | `AyudaTest#sinSesionPideLogin` | Migrada |
+| `test_contacto_con_asunto_llega_a_mensajes` | `AyudaTest#contactoConAsuntoLlegaAMensajes` | Migrada |
+| `test_contacto_vacio_no_se_envia` | `AyudaTest#contactoVacioNoSeEnvia` | Migrada |
 
 ### tests/vistas/bandeja_mensajes/test_bandeja_mensajes.py
 
-Java: sin clase todavía
+Java: `vistas.bandeja.BandejaMensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | — | Programada fase 4 |
-| `test_sin_sesion_pide_login` | — | Programada fase 4 |
-| `test_responder_sin_permiso_devuelve_403` | — | Programada fase 4 |
-| `test_responder_a_quien_no_existe_devuelve_404` | — | Programada fase 4 |
-| `test_el_documento_se_ve_enmascarado` | — | Programada fase 4 |
+| `test_acceso_segun_el_perfil` (casos: 12 perfiles) | `BandejaMensajesTest#accesoSegunElPerfil` | Migrada |
+| `test_sin_sesion_pide_login` | `BandejaMensajesTest#sinSesionPideLogin` | Migrada |
+| `test_responder_sin_permiso_devuelve_403` | `BandejaMensajesTest#responderSinPermisoDevuelve403` | Migrada |
+| `test_responder_a_quien_no_existe_devuelve_404` | `BandejaMensajesTest#responderAQuienNoExisteDevuelve404` | Migrada |
+| `test_el_documento_se_ve_enmascarado` | `BandejaMensajesTest#elDocumentoSeVeEnmascarado` | Migrada |
 
 ### tests/vistas/cambio_contrasena/test_cambio_contrasena.py
 
@@ -1939,15 +1939,15 @@ Java: `vistas.login.LoginTest`
 
 ### tests/vistas/mensajes/test_mensajes.py
 
-Java: sin clase todavía
+Java: `vistas.mensajes.MensajesTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_todos_los_perfiles_entran` (casos: 12 perfiles) | — | Programada fase 4 |
-| `test_sin_sesion_pide_login` | — | Programada fase 4 |
-| `test_envia_un_mensaje` | — | Programada fase 4 |
-| `test_mensaje_demasiado_largo_no_se_envia` | — | Programada fase 4 |
-| `test_solo_ve_sus_mensajes` | — | Programada fase 4 |
+| `test_todos_los_perfiles_entran` (casos: 12 perfiles) | `MensajesTest#todosLosPerfilesEntran` | Migrada |
+| `test_sin_sesion_pide_login` | `MensajesTest#sinSesionPideLogin` | Migrada |
+| `test_envia_un_mensaje` | `MensajesTest#enviaUnMensaje` | Migrada |
+| `test_mensaje_demasiado_largo_no_se_envia` | `MensajesTest#mensajeDemasiadoLargoNoSeEnvia` | Migrada |
+| `test_solo_ve_sus_mensajes` | `MensajesTest#soloVeSusMensajes` | Migrada |
 
 ### tests/vistas/panel/test_panel.py
 
@@ -2053,13 +2053,13 @@ Java: `vistas.fotos.RevisionFotosTest`
 
 ### tests/vistas/tutorial/test_tutorial.py
 
-Java: sin clase todavía
+Java: `vistas.tutorial.TutorialTest`
 
 | Función pytest | Clase#método Java | Estado |
 |---|---|---|
-| `test_todos_los_perfiles_entran` (casos: 12 perfiles) | — | Programada fase 4 |
-| `test_sin_sesion_pide_login` | — | Programada fase 4 |
-| `test_marca_el_tutorial_como_visto` | — | Programada fase 4 |
+| `test_todos_los_perfiles_entran` (casos: 12 perfiles) | `TutorialTest#todosLosPerfilesEntran` | Migrada |
+| `test_sin_sesion_pide_login` | `TutorialTest#sinSesionPideLogin` | Migrada |
+| `test_marca_el_tutorial_como_visto` | `TutorialTest#marcaElTutorialComoVisto` | Migrada |
 
 ### tests/vistas/verificacion/test_verificacion.py
 
@@ -2076,8 +2076,7 @@ Java: sin clase todavía
 
 | Estado | Funciones pytest |
 |---|---|
-| Migrada | 559 |
-| Programada fase 4 | 136 |
+| Migrada | 695 |
 | Programada fase 5 | 98 |
 | Descartada | 11 |
 | **Total** | **804** |

@@ -85,7 +85,7 @@ public abstract class PruebaIntegracion {
     @BeforeEach
     void baseLimpia() throws IOException {
         jdbc.execute("TRUNCATE accesos, equipos, visitantes, vehiculos, objetos_externos, auditoria, usuarios, "
-                + "asistencia_clases, fichas RESTART IDENTITY CASCADE");
+                + "asistencia_clases, mensajes, fichas RESTART IDENTITY CASCADE");
         // Las mismas fichas que siembra V1
         jdbc.execute("""
                 INSERT INTO fichas (numero, programa, fecha_finalizacion) VALUES

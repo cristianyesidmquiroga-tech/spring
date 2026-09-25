@@ -75,6 +75,23 @@ class IntegridadTest extends PruebaIntegracion {
                 aprendiz.getId()).get("instructor_id")).isNull();
     }
 
+    // Una persona con foto rechazada (mensaje automático) se puede borrar, y su hilo se va con ella
+    @Test
+    void conMensajes() throws Exception {
+        Usuario asesor = crearUsuario("asesor@sena.edu.co", "Administrativo", "Usuario", "111", u -> { });
+        Usuario persona = crearUsuario("conmensaje@sena.edu.co", "333");
+        String insertar = "INSERT INTO mensajes (usuario_id, autor_id, autor_nombre, autor_es_admin, texto, automatico) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+        jdbc.update(insertar, persona.getId(), asesor.getId(), asesor.getNombre(), true,
+                "Tu foto fue rechazada: rostro no visible.", true);
+        jdbc.update(insertar, persona.getId(), persona.getId(), persona.getNombre(), false,
+                "La vuelvo a subir, gracias.", false);
+
+        borrarComoAdmin(persona.getId());
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM mensajes WHERE usuario_id = ?", Long.class,
+                persona.getId())).isZero();
+    }
+
     @Test
     void operadorDePorteria() throws Exception {
         Usuario celador = crearUsuario("celador@sena.edu.co", "Celador", "Usuario", "444", u -> { });

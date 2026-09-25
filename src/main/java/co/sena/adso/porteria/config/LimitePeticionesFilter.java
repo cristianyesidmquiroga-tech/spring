@@ -43,7 +43,10 @@ public class LimitePeticionesFilter extends OncePerRequestFilter {
             new Regla("POST", "/api/perfil/foto", List.of(new Ventana(6, MINUTO), new Ventana(40, HORA))),
             new Regla("GET", "/api/porteria/panel/exportar", List.of(new Ventana(10, HORA))),
             new Regla("GET", "/api/historial", List.of(new Ventana(60, MINUTO))),
-            new Regla("POST", "/api/equipos", List.of(new Ventana(20, HORA))));
+            new Regla("POST", "/api/equipos", List.of(new Ventana(20, HORA))),
+            // Una auditoría envió 50 mensajes seguidos por el centro de ayuda sin ninguna traba
+            new Regla("POST", "/api/mensajes", List.of(new Ventana(5, MINUTO), new Ventana(40, HORA))),
+            new Regla("POST", "/api/ayuda/contacto", List.of(new Ventana(5, HORA), new Ventana(15, 24 * HORA))));
 
     private final Map<String, Deque<Long>> registros = new ConcurrentHashMap<>();
 

@@ -63,6 +63,30 @@ class MinimizacionTest extends PruebaIntegracion {
                 new MockHttpServletRequest(metodo, ruta)));
     }
 
+    // El asesor responde dudas de perfil o de foto; no necesita la cédula completa
+    private Sesion asesorConMensajeDe(Usuario persona) throws Exception {
+        Usuario asesor = crearUsuario("adm@sena.edu.co", "Administrativo", "Usuario", "999888", u -> { });
+        mvc.perform(conJson(new Sesion(persona, iniciarSesion(persona.getCorreo(), CLAVE)), post("/api/mensajes"),
+                Map.of("texto", "Ayuda con mi foto")));
+        return new Sesion(asesor, iniciarSesion(asesor.getCorreo(), CLAVE));
+    }
+
+    @Test
+    void laBandejaDelAsesorNoMuestraLaCedulaCompleta() throws Exception {
+        Sesion asesor = asesorConMensajeDe(crearUsuario("ana@sena.edu.co", "1098765432"));
+        String cuerpo = mvc.perform(con(asesor, get("/api/bandeja"))).andReturn().getResponse().getContentAsString();
+        assertThat(cuerpo).doesNotContain("1098765432").contains("5432");
+    }
+
+    @Test
+    void elHiloAbiertoNoMuestraCedulaCompletaNiCorreo() throws Exception {
+        Usuario persona = crearUsuario("ana.secreta@sena.edu.co", "1098765432");
+        Sesion asesor = asesorConMensajeDe(persona);
+        String cuerpo = mvc.perform(con(asesor, get("/api/bandeja/{id}", persona.getId()))).andReturn().getResponse()
+                .getContentAsString();
+        assertThat(cuerpo).doesNotContain("1098765432", "ana.secreta@sena.edu.co").contains("5432");
+    }
+
     @Test
     void porteriaSiVeElDocumentoCompleto() throws Exception {
         Sesion celador = entrarComo(Perfil.CELADOR);
@@ -163,7 +187,9 @@ class MinimizacionTest extends PruebaIntegracion {
         aprobar(admin, persona).andExpect(status().isOk())
                 .andExpect(jsonPath("$.mensaje").value("Esa foto ya estaba aprobada."));
 
-        // El mensaje interno automático llega con la fase 4 (mensajes)
+        // Ni el mensaje automático ni la auditoría se duplican
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM mensajes WHERE usuario_id = ?", Integer.class, persona.getId()))
+                .isEqualTo(1);
         assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM auditoria WHERE accion = 'Foto aprobada'", Integer.class))
                 .isEqualTo(1);
     }

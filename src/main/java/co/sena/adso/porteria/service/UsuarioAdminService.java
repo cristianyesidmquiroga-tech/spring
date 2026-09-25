@@ -45,13 +45,15 @@ public class UsuarioAdminService {
     private final AuditoriaService auditoriaService;
     private final FotoService fotoService;
     private final PasswordEncoder passwordEncoder;
+    private final MensajeService mensajeService;
     private final Clock reloj;
 
     public UsuarioAdminService(UsuarioRepository usuarioRepository, RolRepository rolRepository,
                                FichaRepository fichaRepository, AccesoRepository accesoRepository,
                                DocumentoService documentoService,
                                AuthService authService, AuditoriaService auditoriaService, FotoService fotoService,
-                               PasswordEncoder passwordEncoder, Clock reloj) {
+                               PasswordEncoder passwordEncoder, MensajeService mensajeService, Clock reloj) {
+        this.mensajeService = mensajeService;
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.fichaRepository = fichaRepository;
@@ -211,6 +213,11 @@ public class UsuarioAdminService {
         usuario.setPerfilCompleto(usuario.calcularPerfilCompleto());
         auditoriaService.registrar(admin, TABLA, id, revision.aprobada() ? "Foto aprobada" : "Foto rechazada",
                 null, motivo, "Revisión de la foto de " + usuario.getNombre());
+        // El correo se puede perder; el hilo vive en el sistema y ahí mismo la persona puede responder
+        mensajeService.registrar(id, admin, revision.aprobada()
+                ? "Tu foto de perfil fue aprobada. Tu carnet digital ya está activo."
+                : "Tu foto de perfil no fue aprobada. Motivo: " + motivo + "\n\nSube una foto nueva que cumpla los "
+                        + "requisitos. Si tienes algún problema para hacerlo, respóndeme por aquí.", true);
         usuarioRepository.flush();
         return new RevisionFotoResponseDTO(revision.aprobada() ? "Foto aprobada" : "Foto rechazada",
                 usuarioRepository.countByFotoEstado(Usuario.FOTO_PENDIENTE));

@@ -15,9 +15,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 // Portería 2: tests/roles/celador/test_restringidas.py
 class RestringidasTest extends PruebaRol {
 
-    // PROGRAMADAS: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)
+    // PROGRAMADAS: historial_cambios y respaldos (fase 5)
     static Stream<Arguments> vistas() {
         return Stream.of(Perfil.CELADOR, Perfil.PORTERIA).flatMap(p -> Stream.of(
+                Arguments.of(p, "bandeja_mensajes", "/api/bandeja"),
                 Arguments.of(p, "ambientes", "/api/ambientes"),
                 Arguments.of(p, "asistencia", "/api/asistencia"),
                 Arguments.of(p, "comunicados", "/api/comunicados"),

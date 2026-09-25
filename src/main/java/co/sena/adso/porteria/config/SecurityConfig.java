@@ -61,6 +61,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/porteria/**").hasAuthority("OPERAR_PORTERIA")
                     .requestMatchers("/api/asistencia/**", "/api/comunicados/**").hasAuthority("GESTIONAR_ASISTENCIA")
                     .requestMatchers("/api/ambientes/**").hasAuthority("VER_AMBIENTES")
+                    .requestMatchers("/api/bandeja/**").hasAuthority("ASESORAR")
                     .anyRequest().authenticated());
         } else {
             http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());

@@ -110,6 +110,22 @@ La lista de clase solo trae aprendices de la ficha que cruzaron portería hoy; g
 día reemplaza la anterior. Los comunicados salen por correo (variables `SMTP_*`); sin `SMTP_HOST` la API
 responde a quién no se le pudo enviar.
 
+## Rutas de la fase 4 (soporte)
+
+| Método | Ruta | Quién |
+|---|---|---|
+| GET, POST | /api/mensajes | cada quien su propio hilo |
+| GET | /api/avisos (mensajes sin leer, hilos pendientes, fotos por revisar) | con sesión |
+| GET | /api/bandeja, /api/bandeja/{usuarioId} | Admin y cargos Administrador o Administrativo |
+| POST | /api/bandeja/{usuarioId} | los mismos |
+| GET | /api/ayuda | con sesión |
+| POST | /api/ayuda/contacto | con sesión (5 por hora) |
+| GET | /api/tutorial | con sesión |
+| POST | /api/tutorial/completar | con sesión, siempre sobre la propia cuenta |
+
+Aprobar o rechazar una foto deja un mensaje automático en el hilo de la persona. El asesor ve solo los
+últimos cuatro dígitos del documento y nunca el correo.
+
 ## Seguridad
 
 - Contraseñas con BCrypt, mínimo 8 caracteres combinando letras y números.

@@ -11,6 +11,7 @@ public record UsuarioSesionDTO(
         boolean debeCambiarContrasena,
         boolean perfilCompleto,
         String fotoEstado,
+        boolean tutorialVisto,
         Permisos permisos
 ) {
     public record Permisos(boolean admin, boolean operarPorteria, boolean asesorar,
@@ -19,7 +20,7 @@ public record UsuarioSesionDTO(
 
     public static UsuarioSesionDTO fromEntity(Usuario u) {
         return new UsuarioSesionDTO(u.getId(), u.getNombre(), u.getCorreo(), u.getRol().getNombre(), u.getCargo(),
-                u.isDebeCambiarContrasena(), u.isPerfilCompleto(), u.getFotoEstado(),
+                u.isDebeCambiarContrasena(), u.isPerfilCompleto(), u.getFotoEstado(), u.isTutorialVisto(),
                 new Permisos(u.esAdmin(), u.puedeOperarPorteria(), u.puedeAsesorar(),
                         u.puedeGestionarAsistencia(), u.puedeRegistrarEquipos(), u.puedeVerAmbientes()));
     }

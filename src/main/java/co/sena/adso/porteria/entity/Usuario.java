@@ -106,6 +106,9 @@ public class Usuario {
     @Column(name = "foto_fecha_subida")
     private LocalDateTime fotoFechaSubida;
 
+    @Column(name = "tutorial_visto", nullable = false)
+    private boolean tutorialVisto;
+
     protected Usuario() {
     }
 
@@ -270,4 +273,6 @@ public class Usuario {
     public String getFotoEstado() { return fotoEstado; }
     public String getFotoMotivo() { return fotoMotivo; }
     public LocalDateTime getFotoFechaSubida() { return fotoFechaSubida; }
+    public boolean isTutorialVisto() { return tutorialVisto; }
+    public void marcarTutorialVisto() { this.tutorialVisto = true; }
 }

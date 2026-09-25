@@ -10,9 +10,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 // Portería 2: tests/roles/subdirector/test_restringidas.py
 class RestringidasTest extends PruebaRol {
 
-    // PROGRAMADAS: bandeja_mensajes (fase 4); historial_cambios y respaldos (fase 5)
+    // PROGRAMADAS: historial_cambios y respaldos (fase 5)
     @ParameterizedTest(name = "{0}")
     @CsvSource({
+            "bandeja_mensajes, /api/bandeja",
             "asistencia, /api/asistencia",
             "comunicados, /api/comunicados",
             "fichas, /api/admin/fichas",

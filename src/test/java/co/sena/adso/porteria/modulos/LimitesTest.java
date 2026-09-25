@@ -143,4 +143,16 @@ class LimitesTest extends PruebaIntegracion {
         }
         assertThat(codigos).doesNotContain(429);
     }
+
+    // Una auditoría envió 50 mensajes seguidos sin ninguna traba
+    @Test
+    void elCentroDeAyudaSeLimita() throws Exception {
+        Sesion aprendiz = entrarComo(Perfil.APRENDIZ);
+        Set<Integer> codigos = new HashSet<>();
+        for (int i = 0; i < 8; i++) {
+            codigos.add(mvc.perform(conJson(aprendiz, post("/api/ayuda/contacto"),
+                    Map.of("asunto", "Otro", "detalle", "Hola, necesito ayuda."))).andReturn().getResponse().getStatus());
+        }
+        assertThat(codigos).contains(429);
+    }
 }
