@@ -1,55 +1,23 @@
-# Access Control API (Spring Boot)
+# Portería SENA - API (Spring Boot)
 
-REST API for a training center access control system: digital ID cards, gate control, class attendance, messaging and support. Layered architecture (controller, service, repository, entity, dto) on Spring Boot 3 and Java 21, with PostgreSQL and versioned Flyway migrations. The React front end is in [`react`](https://github.com/cristianyesidmquiroga-tech/react); a Flask version of the same system is in [`porteria-2`](https://github.com/cristianyesidmquiroga-tech/porteria-2).
+API REST del sistema de control de acceso de un centro de formación: carnet digital, control de portería, asistencia a clase, mensajería y soporte. Arquitectura por capas (controller, service, repository, entity, dto) sobre Spring Boot 3 y Java 21, con PostgreSQL y migraciones versionadas con Flyway. El frontend está en [`react`](https://github.com/cristianyesidmquiroga-tech/react) y la versión en Flask del mismo sistema en [`porteria-2`](https://github.com/cristianyesidmquiroga-tech/porteria-2).
 
 ![Java](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3-6DB33F?logo=springboot&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-700%2B-1a7f37)
+![Pruebas](https://img.shields.io/badge/pruebas-700%2B-1a7f37)
 
-## At a glance
+## En resumen
 
-- 73 REST endpoints documented with OpenAPI (Swagger UI at `/swagger-ui.html`).
-- 7 Flyway migrations, 700+ JUnit 5 tests with Testcontainers (disposable PostgreSQL 16) and JaCoCo coverage, run on every push with GitHub Actions.
-- JWT authentication, permissions derived from role and position, email verification, password recovery, anti-bot challenge, rate limiting and an audit log.
-- Gate control with scanner endpoints, passes for visitors, vehicles and objects, class attendance, announcements by email and a support inbox.
-- Monthly Excel backup, bulk user import from Excel and profile photos re-encoded without metadata.
+- 73 endpoints REST documentados con OpenAPI (Swagger en `/swagger-ui.html`).
+- 7 migraciones Flyway y más de 700 pruebas con JUnit 5, Testcontainers (PostgreSQL 16 desechable) y cobertura JaCoCo, ejecutadas en cada push con GitHub Actions.
+- Autenticación JWT, permisos según rol y cargo, verificación de correo, recuperación de contraseña, desafío anti-bot, límite de peticiones y registro de auditoría.
+- Portería con endpoints para el escáner, pases de visitantes, vehículos y objetos, asistencia a clase, comunicados por correo y bandeja de soporte.
+- Respaldo mensual en Excel, importación masiva de usuarios desde Excel y fotos de perfil recodificadas sin metadatos.
 
 ## Stack
 
-Java 21, Spring Boot 3 (Web, Security, Data JPA, Validation, Mail, Actuator), PostgreSQL, Flyway, JJWT, springdoc-openapi, JUnit 5, Mockito, Testcontainers, JaCoCo, Maven.
-
-## Quick start
-
-```bash
-git clone https://github.com/cristianyesidmquiroga-tech/spring.git
-cd spring
-cp .env.example .env          # Windows: copy .env.example .env
-# fill DB_*, JWT_SECRET, ADMIN_EMAIL and ADMIN_PASSWORD in .env
-./mvnw spring-boot:run        # Windows: .\mvnw.cmd spring-boot:run
-```
-
-You need JDK 21 and PostgreSQL 16 (default port in `.env.example` is 5434). Flyway creates the tables on startup and the main administrator is created if it does not exist. Swagger UI: http://localhost:31026/swagger-ui.html
-
-Run the tests (Docker must be running for Testcontainers):
-
-```bash
-./mvnw verify
-```
-
-Coverage report: `target/site/jacoco/index.html`.
-
-The full documentation, in Spanish, follows.
-
----
-
-# Portería SENA - API
-
-Backend en Spring Boot 3 del sistema de control de acceso del centro: usuarios con rol y cargo,
-carnet digital, portería y formación. Es la versión en Java del proyecto Portería 2, organizada
-según la guía de Spring Boot (controller, service, repository, entity, dto, exception, config).
-
-El frontend está en el repositorio `react`.
+Java 21, Spring Boot 3 (Web, Security, Data JPA, Validation, Mail, Actuator), PostgreSQL, Flyway, JJWT, springdoc-openapi, JUnit 5, Mockito, Testcontainers, JaCoCo y Maven.
 
 ## Qué se necesita
 
