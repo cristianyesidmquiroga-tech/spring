@@ -1,5 +1,35 @@
 # Portería SENA - API (Spring Boot)
 
+<details>
+<summary><b>Read this in English</b></summary>
+
+REST API for a training center access control system: digital ID cards, gate control, class attendance, messaging and support. Layered architecture (controller, service, repository, entity, dto) on Spring Boot 3 and Java 21, with PostgreSQL and versioned Flyway migrations. Front end: [`react`](https://github.com/cristianyesidmquiroga-tech/react). Flask version of the same system: [`porteria-2`](https://github.com/cristianyesidmquiroga-tech/porteria-2).
+
+**At a glance**
+- 73 REST endpoints documented with OpenAPI (Swagger UI at `/swagger-ui.html`).
+- 7 Flyway migrations and 700+ JUnit 5 tests with Testcontainers and JaCoCo coverage, run on every push with GitHub Actions.
+- JWT authentication, permissions derived from role and position, email verification, password recovery, anti-bot challenge, rate limiting and an audit log.
+- Gate control endpoints for the scanner, visitor / vehicle / object passes, class attendance, email announcements and a support inbox.
+- Monthly Excel backup and bulk user import from Excel.
+
+**Stack:** Java 21, Spring Boot 3 (Web, Security, Data JPA, Validation, Mail, Actuator), PostgreSQL, Flyway, JJWT, springdoc-openapi, JUnit 5, Mockito, Testcontainers, JaCoCo, Maven.
+
+**Quick start**
+
+```bash
+git clone https://github.com/cristianyesidmquiroga-tech/spring.git
+cd spring
+cp .env.example .env          # Windows: copy .env.example .env
+# fill DB_*, JWT_SECRET, ADMIN_EMAIL and ADMIN_PASSWORD in .env
+./mvnw spring-boot:run        # Windows: .\mvnw.cmd spring-boot:run
+```
+
+Needs JDK 21 and PostgreSQL 16. Swagger UI: http://localhost:31026/swagger-ui.html. Tests (Docker running): `./mvnw verify`.
+
+The full documentation, in Spanish, follows below.
+
+</details>
+
 API REST del sistema de control de acceso de un centro de formación: carnet digital, control de portería, asistencia a clase, mensajería y soporte. Arquitectura por capas (controller, service, repository, entity, dto) sobre Spring Boot 3 y Java 21, con PostgreSQL y migraciones versionadas con Flyway. El frontend está en [`react`](https://github.com/cristianyesidmquiroga-tech/react) y la versión en Flask del mismo sistema en [`porteria-2`](https://github.com/cristianyesidmquiroga-tech/porteria-2).
 
 ![Java](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
