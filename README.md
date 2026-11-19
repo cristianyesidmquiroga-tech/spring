@@ -1,5 +1,7 @@
 # Portería SENA - API (Spring Boot)
 
+[![CI](https://github.com/cristianyesidmquiroga-tech/spring/actions/workflows/pruebas.yml/badge.svg?branch=main)](https://github.com/cristianyesidmquiroga-tech/spring/actions/workflows/pruebas.yml)
+
 <details>
 <summary><b>Read this in English</b></summary>
 
